@@ -417,7 +417,7 @@
       opacity:1;
     }
 
-    /* 3. ON/OFF 버튼 우측 하단 이동 + 183개 광학부 위로 */
+    /* 3. ON/OFF 버튼 우측 하단 이동 + 183 Optical Zone Designs 위로 */
     #detailPage .compactControl{
       width:170px;
       background:transparent;
@@ -948,8 +948,8 @@
 <body>
   <section id="mainPage" class="page active">
     <div class="wrap">
-      <div class="top-title-box">아큐브 멀티포컬 기술력
-      <button class="page-home-btn" type="button" aria-label="홈으로 이동" onclick="goMainHome(event)">
+      <div class="top-title-box">ACUVUE Multifocal Technology
+      <button class="page-home-btn" type="button" aria-label="Go to Home" onclick="goMainHome(event)">
         <svg viewBox="0 0 24 24" aria-hidden="true">
           <path d="M3 10.5L12 3l9 7.5"></path>
           <path d="M5.5 9.5V21h13V9.5"></path>
@@ -959,8 +959,8 @@
 
       <div class="top-cards">
         <div class="menu-card" id="card1">
-          <div class="menu-title">183개 동공 사이즈별 광학부</div>
-          <div class="menu-sub">자세히 보기 &gt;</div>
+          <div class="menu-title">183 Optical Zone Designs by Pupil Size</div>
+          <div class="menu-sub">Learn More &gt;</div>
         </div>
       </div>
 
@@ -986,9 +986,9 @@
         </div>
 
         <div class="powermap-panel" id="powermapPanel" style="display:none;">
-          <h3 class="powermap-title">도수 분포</h3>
+          <h3 class="powermap-title">Power Distribution</h3>
           <div class="powermap-row">
-            <div class="powermap-label">근용도수</div>
+            <div class="powermap-label">Near Power</div>
             <div class="powermap-bar-wrap">
               <div class="powermap-bar">
                 <span class="powermap-tick tick-1"></span>
@@ -996,18 +996,18 @@
                 <span class="powermap-tick tick-3"></span>
               </div>
             </div>
-            <div class="powermap-label">원용도수</div>
+            <div class="powermap-label">Distance Power</div>
           </div>
         </div>
 
         <div class="hero-buttons">
           <button class="round-btn" id="resetBtn" type="button">↺</button>
-          <button class="mode-btn active" id="transparentBtn" type="button">투명 렌즈 모드</button>
-          <button class="mode-btn" id="powerBtn" type="button">렌즈 파워 MAP</button>
+          <button class="mode-btn active" id="transparentBtn" type="button">Transparent Lens Mode</button>
+          <button class="mode-btn" id="powerBtn" type="button">Lens Power Map</button>
         </div>
       </section>
 
-      <div class="main-footnote">해당 이미지는 이해를 돕기 위한 가상 이미지입니다. KR_2026_287</div>
+      <div class="main-footnote">This image is a simulated visual for illustration purposes. KR_2026_287</div>
     </div>
   </section>
 
@@ -1021,33 +1021,33 @@
       </svg>
 
       <section class="hero">
-        <div class="brand">아큐브 183개 동공 사이즈별 광학부
-        <button class="page-back-btn" type="button" aria-label="뒤로가기" onclick="goBackMainPage(event)">←</button>
+        <div class="brand">ACUVUE 183 Optical Zone Designs by Pupil Size
+        <button class="page-back-btn" type="button" aria-label="Back" onclick="goBackMainPage(event)">←</button>
 </div>
         <h1 class="heroTitle">
-          <span class="accent">원용도수</span>와 <span class="accent">가입도</span>에 따라 달라지는 <span class="accent">동공</span>.
-          그래서 멀티포컬은 <span class="accent">광학부 사이즈</span>가 중요합니다.
-          <span class="titleNote">원용도수와 가입도를 조정하여 동공과 광학부 사이즈 변화를 확인해보세요.</span>
+          <span class="accent">Distance Power</span>와 <span class="accent">가입도</span>에 따라 달라지는 <span class="accent">동공</span>.
+          That is why <span class="accent">optical zone size</span> matters in multifocal lenses.
+          <span class="titleNote">Adjust the distance power and add power to explore changes in pupil size and optical zone size.</span>
         </h1>
       </section>
 
       <section class="card sliderCard">
-        <h3>도수, 나이(가입도)에 따른 동공 사이즈 변화</h3>
+        <h3>도수, Changes in Pupil Size by Age (Add Power)</h3>
 
         <div class="visualStage">
           <div class="visualStack">
             <div class="imagePair">
               <div class="eyePanel">
-                <img id="eyeBase" class="eyeBase" src="eye-photo.png" alt="동공 이미지">
+                <img id="eyeBase" class="eyeBase" src="eye-photo.png" alt="Pupil Image">
                 <svg class="overlaySvg" id="eyeOverlay" viewBox="0 0 400 220" preserveAspectRatio="xMidYMid meet"></svg>
               </div>
 
               <div class="lensPanel">
-                <img id="lensBase" class="lensBase" src="lens-photo.png" alt="광학부 이미지">
+                <img id="lensBase" class="lensBase" src="lens-photo.png" alt="Optical Zone Image">
                 <svg class="overlaySvg" id="lensOverlay" viewBox="0 0 400 220" preserveAspectRatio="xMidYMid meet"></svg>
 
                 <div class="compactControl">
-                  <div class="compactLabel">183개 광학부</div>
+                  <div class="compactLabel">183 Optical Zone Designs</div>
                   <div class="switchWrap">
                     <button class="pillBtn" id="onBtn" type="button">ON</button>
                     <button class="pillBtn active" id="offBtn" type="button">OFF</button>
@@ -1059,27 +1059,27 @@
             <div class="spec">
               <div class="sliderBlock">
                 <div class="sliderTop">
-                  <div class="label">원용도수</div>
+                  <div class="label">Distance Power</div>
                   <div class="value" id="sphereValue">-3.00</div>
                 </div>
-                <input id="sphereSlider" type="range" min="-9" max="6" step="1" value="-3" aria-label="원용도수 슬라이더">
+                <input id="sphereSlider" type="range" min="-9" max="6" step="1" value="-3" aria-label="Distance Power Slider">
                 <div class="scale"><span>-9.00</span><span>0.00</span><span>+6.00</span></div>
               </div>
 
               <div class="sliderBlock">
                 <div class="sliderTop">
-                  <div class="label">가입도(나이)</div>
+                  <div class="label">Add Power (Age)</div>
                   <div class="value" id="addValue">Mid</div>
                 </div>
-                <input id="addSlider" type="range" min="0" max="2" step="1" value="1" aria-label="가입도 슬라이더">
-                <div class="scale"><span>Low(40대)</span><span>Mid(50대)</span><span>High(60대)</span></div>
+                <input id="addSlider" type="range" min="0" max="2" step="1" value="1" aria-label="Add Power Slider">
+                <div class="scale"><span>Low (40s)</span><span>Mid (50s)</span><span>High (60s)</span></div>
               </div>
             </div>
 
             <div class="messageBox">
               <p class="messageTitle">
-                아큐브 멀티포컬은<strong> 도수와 가입도에 따른 183개 광학부</strong>로<br>
-                <span class="emphasisLine">가까운 거리부터 먼 거리까지 선명한 시야</span>를 제공합니다
+                ACUVUE Multifocal provides <strong>183 optical zone designs based on distance power and add power</strong><br>
+                <span class="emphasisLine">for clear vision from near to far</span>
               </p>
             </div>
           </div>
@@ -1090,13 +1090,13 @@
         <div class="visionTrigger">
           <div>
             <h3>Vision Simulator</h3>
-            <div class="muted">버튼을 눌러 시야 시뮬레이션을 확인하세요.</div>
+            <div class="muted">Tap the button to view the vision simulation.</div>
           </div>
-          <button class="btn primary" id="openVisionBtn" type="button">시뮬레이터<br>열기</button>
+          <button class="btn primary" id="openVisionBtn" type="button">Open<br>Simulator</button>
         </div>
       </section>
 
-      <div class="pageFootnote">*동공사이즈 및 이미지는 이해를 돕기 위한 가상이미지 입니다. KR_2026_287</div>
+      <div class="pageFootnote">**Pupil size and images are simulated for illustration purposes. KR_2026_287</div>
 
       <div class="references-space">1.Teshigawara,T., Meguro,A.,& Mizuki, N. (2021). The effect of age, postoperative refraction, and pre-and postoperative pupil size on halo size and intensity in eyes implanted with a trifocal or extended depth-of-focus lens. Clinical Ophthalmology, 15,4141~4152.
 2.The effects of age and refraction on pupil size and visual acuity:Implications for multifocal contact lens design and fitting Kathy Dumbleton · Michel Guillon · Panagiotis Theodoratos ·C. Benjamin Wooley · Kurt MoodyContact Lens & Anterior Eye Volume 41, Supplement 1, S23, June 2018
@@ -1106,9 +1106,9 @@
 
     <div class="modalBack" id="visionModal">
       <div class="modalCard">
-        <button class="btn modalClose" id="closeVisionBtn" type="button">닫기</button>
+        <button class="btn modalClose" id="closeVisionBtn" type="button">Close</button>
         <h3>Vision Simulation</h3>
-        <div class="muted">동공과 광학부 사이즈에 따른 시야 시뮬레이션</div>
+        <div class="muted">Vision simulation based on pupil size and optical zone size</div>
 
         <div class="visionGrid">
           <div class="screen" id="screen">
@@ -1131,8 +1131,8 @@
 
           <div class="explain" id="explainBox">
             <div class="explainTopBar">
-              <strong>시뮬레이션 해석</strong>
-              <button class="btn inlineCamBtn" id="camBtn" type="button" aria-label="카메라 켜기" title="카메라">
+              <strong>Simulation Interpretation</strong>
+              <button class="btn inlineCamBtn" id="camBtn" type="button" aria-label="Turn Camera On" title="카메라">
                 <svg class="cam-icon" viewBox="0 0 24 24" aria-hidden="true">
                   <path d="M4.5 8.5h3l1.4-2h6.2l1.4 2h3A1.5 1.5 0 0 1 21 10v7.5A1.5 1.5 0 0 1 19.5 19h-15A1.5 1.5 0 0 1 3 17.5V10A1.5 1.5 0 0 1 4.5 8.5Z"></path>
                   <circle cx="12" cy="13.5" r="3.6"></circle>
@@ -1144,7 +1144,7 @@
           </div>
         </div>
 
-        <div class="modalFootnote">해당 시뮬레이션은 이해를 돕기 위한 데모 화면이며, 실제 시야 경험과는 차이가 있을 수 있습니다. KR_2026_287</div>
+        <div class="modalFootnote">This simulation is a demo created for illustration purposes,, and may differ from actual visual experience. KR_2026_287</div>
       </div>
     </div>
   </section>
@@ -1333,9 +1333,9 @@
 
     function renderTagButtons(activeState) {
       const tagMap = [
-        { key:'match', label:'동공≈광학부' },
-        { key:'pupilGreater', label:'동공>광학부' },
-        { key:'opticGreater', label:'동공<광학부' }
+        { key:'match', label:'Pupil ≈ Optical Zone' },
+        { key:'pupilGreater', label:'Pupil > Optical Zone' },
+        { key:'opticGreater', label:'Pupil < Optical Zone' }
       ];
 
       explainTags.innerHTML = '';
@@ -1364,10 +1364,10 @@
         return;
       }
       if (state === 'pupilGreater') {
-        explainConclusion.textContent = '동공사이즈가 광학부 사이즈보다 커서 주변부 시야 번짐(빛번짐)이나 근거리 흐림이 발생할 수 있습니다.';
+        explainConclusion.textContent = 'When the pupil size is larger than the optical zone size, peripheral glare/halos or near blur may occur.';
         return;
       }
-      explainConclusion.textContent = '원용도수 영역이 충분히 노출되지 않아 원거리에서 흐림이 발생할 수 있습니다.';
+      explainConclusion.textContent = 'If the distance power zone is not sufficiently exposed, blur at far distance may occur.';
     }
 
     function updateVisionEffect(pupilMM, opticMM, forcedState = null) {
@@ -1672,12 +1672,12 @@
         fallbackImg.style.display = 'none';
         fallbackImgBlur.style.display = 'none';
         fallbackImgNearBlur.style.display = 'none';
-        camBtn.setAttribute('aria-label', '카메라 끄기');
-        camBtn.setAttribute('title', '카메라 끄기');
+        camBtn.setAttribute('aria-label', 'Turn Camera Off');
+        camBtn.setAttribute('title', 'Turn Camera Off');
         camBtn.classList.add('primary');
         renderModalPreview();
       } catch (e) {
-        alert('카메라 권한을 허용하면 실시간 시뮬레이션을 볼 수 있습니다.');
+        alert('Allow camera access to view the simulation in real time.');
       }
     }
 
@@ -1695,8 +1695,8 @@
       fallbackImgBlur.style.display = 'block';
       fallbackImgNearBlur.style.display = 'block';
       setFallbackScene(0);
-      camBtn.setAttribute('aria-label', '카메라 켜기');
-      camBtn.setAttribute('title', '카메라 켜기');
+      camBtn.setAttribute('aria-label', 'Turn Camera On');
+      camBtn.setAttribute('title', 'Turn Camera On');
       camBtn.classList.remove('primary');
       renderModalPreview();
     }
