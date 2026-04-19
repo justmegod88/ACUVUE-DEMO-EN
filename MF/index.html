@@ -1725,6 +1725,15 @@
 <script>
   function goBackMainPage(event){
     if(event) event.stopPropagation();
+
+    if(location.hash === '#card1'){
+      if(history.replaceState){
+        history.replaceState(null, '', window.location.pathname + window.location.search);
+      }else{
+        location.hash = '';
+      }
+    }
+
     const mainPage = document.getElementById('mainPage');
     const detailPage = document.getElementById('detailPage');
     if(mainPage && detailPage){
