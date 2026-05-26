@@ -1,6 +1,6 @@
 <!DOCTYPE html>
 
-<html lang="ko">
+<html lang="en">
 <head>
 <meta charset="utf-8"/>
 <meta content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no" name="viewport"/>
@@ -633,7 +633,7 @@
 
     @keyframes pvpHydrationPulse{
       0%{ opacity:.68; transform:scale(.98); filter:blur(8px); }
-      42%{ opacity:1; transform:scale(1.04); filter:blur(4px); }
+      42%{ opacity:1; transform:scale(1.04); filter:blur(2.2px); }
       100%{ opacity:.96; transform:scale(1.02); filter:blur(5px); }
     }
     @keyframes pvpDryBreak{
@@ -2229,6 +2229,83 @@
     }
 
 
+    /* ASD activation zone glow: invisible hit-spots only; no extra visible circles */
+    #asdActiveZones{
+      position:absolute;
+      inset:0;
+      z-index:6;
+      pointer-events:none;
+      display:block;
+    }
+    .asdActiveZone{
+      position:absolute;
+      width:29px;
+      height:19px;
+      border-radius:999px;
+      transform:translate(-50%,-50%);
+      opacity:0;
+      background:transparent;
+      border:none;
+      box-shadow:none;
+      filter:none;
+      mix-blend-mode:screen;
+      transition:left .18s ease, top .18s ease, transform .18s ease;
+    }
+    .asdActiveZone::before{
+      content:"";
+      position:absolute;
+      inset:-8px;
+      border-radius:999px;
+      opacity:0;
+      background:
+        radial-gradient(ellipse at 50% 50%, rgba(255,255,255,.96) 0%, rgba(185,238,255,.72) 18%, rgba(90,198,255,.34) 42%, rgba(0,94,184,.10) 62%, rgba(0,94,184,0) 78%);
+      filter:blur(4px);
+      transform:scale(.75);
+    }
+    .asdActiveZone::after{
+      content:"";
+      position:absolute;
+      inset:-2px;
+      border-radius:999px;
+      opacity:0;
+      background:radial-gradient(circle at 50% 50%, rgba(255,255,255,.90) 0%, rgba(255,255,255,.55) 14%, rgba(255,255,255,0) 42%);
+      filter:blur(.45px);
+      transform:scale(.70);
+    }
+    #asdOverlay.asd-active-flash .asdActiveZone{
+      animation:asdActiveZoneFlash .24s cubic-bezier(.18,.9,.24,1) both;
+      animation-delay:0s !important;
+    }
+    #asdOverlay.asd-active-flash .asdActiveZone::before{
+      animation:asdActiveZoneGlowCore .24s cubic-bezier(.18,.9,.24,1) both;
+      animation-delay:0s !important;
+    }
+    #asdOverlay.asd-active-flash .asdActiveZone::after{
+      animation:asdActiveZoneSpark .24s cubic-bezier(.18,.9,.24,1) both;
+      animation-delay:0s !important;
+    }
+    @keyframes asdActiveZoneFlash{
+      0%{ opacity:0; transform:translate(-50%,-50%) scale(.82); }
+      30%{ opacity:1; transform:translate(-50%,-50%) scale(1.05); }
+      100%{ opacity:0; transform:translate(-50%,-50%) scale(1.24); }
+    }
+    @keyframes asdActiveZoneGlowCore{
+      0%{ opacity:0; transform:scale(.70); }
+      28%{ opacity:1; transform:scale(1.12); }
+      100%{ opacity:0; transform:scale(1.36); }
+    }
+    @keyframes asdActiveZoneSpark{
+      0%{ opacity:0; transform:scale(.62); }
+      22%{ opacity:.95; transform:scale(1.00); }
+      100%{ opacity:0; transform:scale(1.22); }
+    }
+    #asdOverlay.camera-on #asdActiveZones .asdActiveZone{
+      width:27px;
+      height:18px;
+      opacity:0;
+    }
+
+
     /* requested popup button cleanup */
     #asdConfirmBtn,
     #comfortConfirm,
@@ -2341,7 +2418,7 @@ body.popup-open #homeBtnMain{
 <div id="missionBarWrap">
 <div id="missionBarHeader">ACUVUE<sup class="reg-mark">®</sup> Astigmatism Lens Technology</div>
 
-<button id="homeBtnMain" aria-label="Go Home" onclick="goHomeMain(event)">
+<button id="homeBtnMain" aria-label="Go home" onclick="goHomeMain(event)">
   <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
     <path d="M3 10.5L12 3l9 7.5"></path>
     <path d="M5.5 9.5V21h13V9.5"></path>
@@ -2351,18 +2428,18 @@ body.popup-open #homeBtnMain{
 <div id="missionBar">
 <div class="missionCard" id="missionASD" role="button" tabindex="0">
 <div class="missionNo">01</div>
-<div class="missionTitle">ASD™ Stabilization</div>
-<div class="missionDesc"> Learn More &gt; </div>
+<div class="missionTitle">ASD™ Axis Stabilization</div>
+<div class="missionDesc"> Learn more &gt; </div>
 </div>
 <div class="missionCard" id="missionPVP" role="button" tabindex="0">
 <div class="missionNo">02</div>
-<div class="missionTitle">PVP Moisture Agent</div>
-<div class="missionDesc"> Learn More &gt;</div>
+<div class="missionTitle">PVP Wetting Agent</div>
+<div class="missionDesc"> Learn more &gt;</div>
 </div>
 <div class="missionCard" id="missionComfort" role="button" tabindex="0">
 <div class="missionNo">03</div>
-<div class="missionTitle">Optical Zone with Reduced Prism</div>
-<div class="missionDesc">  Learn More &gt; </div>
+<div class="missionTitle">Low-Prism Optic Zone</div>
+<div class="missionDesc"> Learn more &gt; </div>
 </div>
 </div>
 </div>
@@ -2390,8 +2467,8 @@ body.popup-open #homeBtnMain{
 <div id="pvpMain">
 <img alt="PVP" data-fallback="0" id="pvpThumb" onerror="if(this.dataset.fallback==='0'){this.dataset.fallback='1'; this.src='PVP.png';}else if(this.dataset.fallback==='1'){this.dataset.fallback='2'; this.src='PVP.jpeg';}else{this.onerror=null;}" src="PVP.png"/>
 <div id="pvpText">
-<div id="pvpTitle">PVP Moisture Agent</div>
-<div id="hint">The PVP Moisture Agent in the Lens helps provide <span class="pvp-highlight">all-day moisture</span>.<sup class="reg-mark">1</sup></div>
+<div id="pvpTitle">PVP Wetting Agent</div>
+<div id="hint">The PVP wetting agent in the lens helps provide <span class="pvp-highlight">all-day moisture</span>.<sup class="reg-mark">1</sup></div>
 </div>
 <div id="pvpActions">
 </div>
@@ -2404,7 +2481,7 @@ body.popup-open #homeBtnMain{
 <div id="asdCard">
 <div id="asdHeader">
 <div id="asdHeaderTitleWrap">
-<div id="asdHeaderTitle">ASD™ Stabilization</div>
+<div id="asdHeaderTitle">ASD™ Axis Stabilization</div>
 <div id="asdHeaderSubTitle">Accelerated Stabilization Design </div>
 </div>
 <button id="asdClose" type="button">X</button>
@@ -2421,7 +2498,7 @@ body.popup-open #homeBtnMain{
 <div aria-hidden="true" id="asdMiniFace">
 <video autoplay="" id="asdMiniFaceVideo" muted="" playsinline=""></video>
 <canvas id="asdMiniFaceCanvas"></canvas>
-<div id="asdMiniFaceLabel">Please<br/>Blink</div>
+<div id="asdMiniFaceLabel">Please blink</div>
 </div>
 <img alt="Eye background" id="asdEyeMV" onerror="this.onerror=null; this.src='a.gif';" src="a.png"/>
 <div aria-hidden="true" id="asdCameraGuide">
@@ -2431,16 +2508,23 @@ body.popup-open #homeBtnMain{
 <div id="asdGuideSideLeft"></div>
 <div id="asdGuideSideRight"></div>
 <div id="asdGuideAxis"></div>
-<div id="asdStatusText">Axis stabilizing…</div>
+<div id="asdStatusText">Stabilizing axis…</div>
 <div class="asdGuideDot" id="asdGuideDotLeft"></div>
 <div class="asdGuideDot" id="asdGuideDotRight"></div>
+
+</div>
+<div aria-hidden="true" id="asdActiveZones">
+<div class="asdActiveZone" data-zone="0"></div>
+<div class="asdActiveZone" data-zone="1"></div>
+<div class="asdActiveZone" data-zone="2"></div>
+<div class="asdActiveZone" data-zone="3"></div>
 </div>
 <div id="asdLensRim"></div>
-<img alt="Lens overlay" id="asdLensImg" onerror="this.style.display='none'; document.getElementById('asdHint').innerHTML='&lt;div id=&quot;asdInfoBadge&quot;&gt;i&lt;/div&gt;&lt;div class=&quot;hintText&quot;&gt;&lt;span class=&quot;hintTitle&quot;&gt;file Confirm해 주세요.&lt;/span&gt;&lt;span class=&quot;hintBody&quot;&gt;&lt;span class=&quot;blue&quot;&gt;lens.png / lens2.png&lt;/span&gt; file 같 in the folder please add it.&lt;/span&gt;&lt;/div&gt;';" src="lens.png"/>
+<img alt="Lens overlay" id="asdLensImg" onerror="this.style.display='none'; document.getElementById('asdHint').innerHTML='&lt;div id=&quot;asdInfoBadge&quot;&gt;i&lt;/div&gt;&lt;div class=&quot;hintText&quot;&gt;&lt;span class=&quot;hintTitle&quot;&gt;Please check the file.&lt;/span&gt;&lt;span class=&quot;hintBody&quot;&gt;&lt;span class=&quot;blue&quot;&gt;lens.png / lens2.png&lt;/span&gt; Please add the file to the same folder.&lt;/span&gt;&lt;/div&gt;';" src="lens.png"/>
 <div id="asdMaskShade"></div>
 <img alt="Upper eyelid overlay" id="asdUpperLid" onerror="this.style.display='none';" src="upper_lid.png"/>
 <div id="asdBlinkLid"><div id="asdLidTop"></div><div id="asdLidBot"></div></div>
-<div id="asdAngleBadge">20° Rotation to the Left</div>
+<div id="asdAngleBadge">20° left rotation detected</div>
 </div>
 <div id="asdControlBar">
 <button class="asdActionBtn" id="asdRotateBtn" type="button">Induce Axis Rotation</button>
@@ -2456,18 +2540,18 @@ body.popup-open #homeBtnMain{
 <div id="asdInfoBadge">i</div>
 <div class="hintText">
 <span class="hintTitle">Why Axis Stability Matters for Astigmatism Lenses</span>
-<span class="hintBody">ACUVUE<sup class="reg-mark">®</sup> ASD™ helps stabilize Lens movement with <span class="green"><span style="color:#2563eb;font-weight:600;">a natural blink for Clear Vision</span></span>.</span>
+<span class="hintBody">ACUVUE<sup class="reg-mark">®</sup> ASD™ helps <span class="green"><span style="color:#2563eb;font-weight:600;">stabilize lens movement with natural blinking for clear vision</span></span>.</span>
 </div>
 </div>
 <div class="toric-popup-disclaimer"><span class="disc-note">McIlraith R, Young G, Hunt C.Toric lens orientation and visual acuity in non-standard conditions. Contact Lens & Anterior Eye, 2010
-    This simulation is a demo created for illustration purposes,, and may differ from actual visual experience. KR_2026_287</span></div>
+    This simulation is for demonstration purposes only and may differ from actual visual experience. KR_2026_287</span></div>
 </div>
 </div>
 <div aria-hidden="true" id="comfortOverlay">
 <div id="comfortWrap" onclick="event.stopPropagation()">
 <div id="comfortHead">
 <div id="comfortTitleWrap">
-<div id="comfortTitle">Optical Zone with Reduced Prism</div>
+<div id="comfortTitle">Low-Prism Optic Zone</div>
 <div id="comfortSubTitle">OPTICAL TECHNOLOGY VISUALIZATION</div>
 </div>
 <button id="comfortClose" type="button">×</button>
@@ -2480,7 +2564,7 @@ body.popup-open #homeBtnMain{
 <div class="comfort-camera-half top"><video autoplay="" id="comfortCameraTop" muted="" playsinline=""></video></div>
 <div class="comfort-camera-half bottom"><video autoplay="" id="comfortCameraBottom" muted="" playsinline=""></video></div>
 </div>
-<div id="comfortCameraFallback">Camera is not available in this environment.<br/>Please check the default Simulation.</div>
+<div id="comfortCameraFallback">Camera is not available in this environment.<br/>Please use the default simulation.</div>
 </div>
 <div id="cfTargetStage">
 <div class="cf-target-box cf-box-top"></div>
@@ -2496,9 +2580,9 @@ body.popup-open #homeBtnMain{
 <div id="cfSegWrap">
 <div class="cf-toggle">
 <button class="cf-seg-btn active" data-state="off" id="cfBtnOff" type="button">No Prism</button>
-<button class="cf-seg-btn" data-state="on" id="cfBtnOn" type="button">Prism Present</button>
+<button class="cf-seg-btn" data-state="on" id="cfBtnOn" type="button">Prism</button>
 </div>
-<button aria-label="Turn Camera On" class="cf-camera-btn" id="cfCameraBtn" type="button">
+<button aria-label="Turn camera on" class="cf-camera-btn" id="cfCameraBtn" type="button">
 <svg aria-hidden="true" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2.1" viewbox="0 0 24 24">
 <path d="M4 7h3l2-2h6l2 2h3a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V9a2 2 0 0 1 2-2z"></path>
 <circle cx="12" cy="13" r="3.5"></circle>
@@ -2508,7 +2592,7 @@ body.popup-open #homeBtnMain{
 <div id="comfortMessage">
 <div id="comfortMessageCopyWrap">
 <div id="comfortInfoBadge">i</div>
-<div id="comfortMessageCopy"><span class="comfort-info-title">Why Axis Stability Matters for Astigmatism Lenses</span>ACUVUE<sup class="reg-mark">®</sup> ASD™ <span class="green"><span style="color:#2563eb;font-weight:600;">with a natural Blink to stabilize Lens movement for Clear Vision</span></span> 제공합니다.</div>
+<div id="comfortMessageCopy"><span class="comfort-info-title">Why Axis Stability Matters for Astigmatism Lenses</span>ACUVUE<sup class="reg-mark">®</sup> ASD™ helps <span class="green"><span style="color:#2563eb;font-weight:600;">stabilize lens movement with natural blinking for clear vision</span></span>.</div>
 </div>
 <button id="comfortConfirm" style="display:none;" type="button">Confirm Done</button>
 </div>
@@ -2516,14 +2600,14 @@ body.popup-open #homeBtnMain{
 <span class="ref-line">1. Sulley A, Hawke R, Osborn Lorenz K, et al.Resultant vertical prism in toric soft contact lenses.Cont Lens Anterior Eye. 2015;38(4):253–257. 
                        2. Cripps, A. (2022). PRISM: a help and a hindrance (CPD Code: C-102818). Association of British Dispensing Opticians.</span>
 </div>
-<div class="toric-popup-disclaimer"><span class="disc-note">This simulation is a demo created for illustration purposes,, and may differ from actual visual experience. KR_2026_287</span></div>
+<div class="toric-popup-disclaimer"><span class="disc-note">This simulation is for demonstration purposes only and may differ from actual visual experience. KR_2026_287</span></div>
 </div>
 </div>
 <div aria-hidden="true" id="tutorialLayer">
 <div id="tutorialMask"></div><div id="tutorialFocus"></div>
-<div class="tutBox" id="tutLeft" style="display:none;"><div class="tutTitle">Guide 1</div><div class="tutText">Drag the Lens left and right.<br/>You can inspect the Lens structure more clearly by zooming in and out.</div><button class="tutBtn" id="tutNext1">Confirm</button></div>
-<div class="tutBox" id="tutBottom" style="display:none;"><div class="tutTitle">Guide 2</div><div class="tutText">Click ‘Lens Thickness Map’ to<br/>check ACUVUE<sup class="reg-mark">®</sup> Infinity Edge (the thinnest purple area)!</div><button class="tutBtn" id="tutNext2">Confirm</button></div>
-<div class="tutBox" id="tutTop" style="display:none;"><div class="tutTitle">Guide 3</div><div class="tutText">Tap each card to continue the Experience.<br/></div><button class="tutBtn" id="tutDone">Confirm</button></div>
+<div class="tutBox" id="tutLeft" style="display:none;"><div class="tutTitle">Guide 1</div><div class="tutText">Drag the lens left and right to move it.<br/>Zoom in and out to see the lens structure more clearly.</div><button class="tutBtn" id="tutNext1">Confirm</button></div>
+<div class="tutBox" id="tutBottom" style="display:none;"><div class="tutTitle">Guide 2</div><div class="tutText">Tap the “Lens Thickness Map”<br/>to check the ACUVUE<sup class="reg-mark">®</sup> Infinity Edge, the thinnest purple area.</div><button class="tutBtn" id="tutNext2">Confirm</button></div>
+<div class="tutBox" id="tutTop" style="display:none;"><div class="tutTitle">Guide 3</div><div class="tutText">Tap each card to start the experience.<br/></div><button class="tutBtn" id="tutDone">Confirm</button></div>
 </div>
 <div aria-hidden="true" id="blueBackGlow"></div>
 <div aria-hidden="true" id="blueRayLayerBack">
@@ -2584,9 +2668,9 @@ body.popup-open #homeBtnMain{
 <b>Blocks <span class="pct">55%</span> of Blue Light</b>
 </div>
 <div id="blueInfoBody">
-      ACUVUE<sup class="reg-mark">®</sup> OASYS MAX 1-Day for Astigmatism 
-      <span class="blue-highlight">helps protect eyes exposed to digital screens by blocking 55% of Blue Light</span>.
-      Check the <span class="tint-highlight">blue-green tint</span> for Blue Light filtering.
+      ACUVUE<sup class="reg-mark">®</sup> OASYS MAX 1-Day for ASTIGMATISM 
+      <span class="blue-highlight">blocks 55% of blue light to help protect eyes exposed to digital devices</span>.
+      Check the <span class="tint-highlight">blue-green tint</span> designed for blue light filtering.
     </div>
 <div id="blueInfoMission">
 <button class="confirm" id="blueSimOpen" type="button">Vision Simulator</button>
@@ -2608,7 +2692,7 @@ body.popup-open #homeBtnMain{
 <div id="blueSimImageStage"></div>
 <div id="blueSimCameraStage">
 <video autoplay="" id="blueCameraVideo" muted="" playsinline=""></video>
-<div id="blueCameraFallback">After allowing Camera access, try it under <b>bright lighting or window light</b>.<br/>Move the slider to compare <b>OFF / ON</b> on one screen.</div>
+<div id="blueCameraFallback">Allow camera access, then point it toward <b>bright light or window light</b>.<br/>Move the slider to compare <b>OFF / ON</b> in one view.</div>
 </div>
 <div id="blueSimBloom"></div>
 <div class="blue-hotspot" id="blueHotspot1"></div>
@@ -2630,13 +2714,13 @@ body.popup-open #homeBtnMain{
 <div aria-hidden="true" id="blueCompareDivider">
 <span id="blueCompareHandle"></span>
 </div>
-<input aria-label="Blue Light Comparison Slider" id="blueCompareRange" max="100" min="0" type="range" value="50"/>
+<input aria-label="Blue light filtering comparison slider" id="blueCompareRange" max="100" min="0" type="range" value="50"/>
 <div aria-hidden="true" id="blueCompareLabels">
 <span class="compare-label compare-off">OFF</span>
 <span class="compare-label compare-on">ON</span>
 </div>
-<div id="blueTopGuide">Check bright lighting or a monitor screen</div>
-<div aria-label="Day/Night Toggle" id="blueDayNightToggle">
+<div id="blueTopGuide">Look at bright lighting or a monitor screen.</div>
+<div aria-label="Day night toggle" id="blueDayNightToggle">
 <button aria-label="Day" class="blueIconModeBtn" id="blueDayBtn" type="button">
 <svg aria-hidden="true" viewbox="0 0 24 24">
 <circle cx="12" cy="12" fill="none" r="4.2" stroke="currentColor" stroke-width="2.2"></circle>
@@ -2653,13 +2737,13 @@ body.popup-open #homeBtnMain{
 </div>
 <div id="blueSimMessage">
 <div id="blueSimInfoBadge">i</div>
-<div id="blueSimMessageCopy"><span id="blueSimMessageTitle">Blue Light Comparison</span><span class="blue">Left is OFF</span>, <span class="blue">right is ON</span>. Move the center slider to compare <span class="blue">glare and clarity</span> 한 on screen 비교해 check it.</div>
+<div id="blueSimMessageCopy"><span id="blueSimMessageTitle">Blue Light Filtering Comparison</span><span class="blue">Left is OFF</span>, <span class="blue">right is ON</span>. Move the center slider to compare the <span class="blue">difference in glare and clarity</span> before and after blue light filtering.</div>
 </div>
 <div class="popup-reference-area" style="padding:14px 24px 0; background:#fff;">
 <span class="ref-line">Hammond, B. R., Jr., Fletcher, L. M., &amp; Elliott, J. G. (2013).Glare disability, photostress recovery, and chromatic contrast: Relation to macular pigment.Investigative Ophthalmology &amp; Visual Science, 54(1), 476–481.https://doi.org/10.1167/iovs.12-10411
 </span>
 </div>
-<div class="toric-popup-disclaimer"><span class="disc-note">This simulation is a demo created for illustration purposes,, and may differ from actual visual experience. KR_2026_287</span></div>
+<div class="toric-popup-disclaimer"><span class="disc-note">This simulation is for demonstration purposes only and may differ from actual visual experience. KR_2026_287</span></div>
 </div>
 </div>
 <script src="https://unpkg.com/@google/model-viewer/dist/model-viewer.min.js" type="module"></script>
@@ -2667,13 +2751,13 @@ body.popup-open #homeBtnMain{
 <model-viewer camera-controls="" camera-orbit="0deg 100deg 2.6m" camera-target="0m 0.015m 0m" environment-image="neutral" exposure="1.35" id="mv" shadow-intensity="0" src="lens_clear.glb" tone-mapping="aces" touch-action="pan-y">
 </model-viewer>
 <div id="bottomBtns">
-<button id="btnReset" title="Reset Position">↺</button>
-<button class="btn primary" id="modeLens">Lens Mode</button>
+<button id="btnReset" title="Reset position">↺</button>
+<button class="btn primary" id="modeLens">Clear Lens Mode</button>
 <button class="btn" id="modeHeat">Lens Thickness Map
-      <img alt="ACUVUE MAX Astigmatism Packshot" aria-label="Open Blue Light Feature" id="maxPackshot" onerror="this.style.display='none';" role="button" src="MAX.png" tabindex="0"/>
+      <img alt="ACUVUE MAX Astigmatism packshot" aria-label="Open blue light feature" id="maxPackshot" onerror="this.style.display='none';" role="button" src="MAX.png" tabindex="0"/>
 </button>
 </div>
-<div id="globalToricDisclaimer">This Image is a simulated visual for illustration purposes. KR_2026_287</div>
+<div id="globalToricDisclaimer">This image is a simulated visual for demonstration purposes. KR_2026_287</div>
 <script>
     const mv = document.getElementById('mv');
     const missionASD = document.getElementById('missionASD');
@@ -2920,8 +3004,8 @@ body.popup-open #homeBtnMain{
       comfortScene.classList.toggle('camera-on', !!comfortCameraOn);
       if(cfCameraBtn){
         cfCameraBtn.classList.toggle('active', !!comfortCameraOn);
-        cfCameraBtn.setAttribute('aria-label', comfortCameraOn ? 'Turn Camera Off' : 'Turn Camera On');
-        cfCameraBtn.title = comfortCameraOn ? 'Turn Camera Off' : 'Turn Camera On';
+        cfCameraBtn.setAttribute('aria-label', comfortCameraOn ? 'Turn camera off' : 'Turn camera on');
+        cfCameraBtn.title = comfortCameraOn ? 'Turn camera off' : 'Turn camera on';
       }
       if(comfortCameraBase) comfortCameraBase.style.display = comfortCameraOn ? 'block' : 'none';
       if(comfortCameraSplit) comfortCameraSplit.style.display = (comfortCameraOn && comfortScene.classList.contains('mode-on')) ? 'block' : 'none';
@@ -3037,7 +3121,7 @@ body.popup-open #homeBtnMain{
           const isBright = maxL > 214 && (maxL - avgL) > 24;
           blueSimOverlay?.classList.toggle('bright-light', isBright);
           const centerX = 24;
-          const centerY = 34;
+          const centerY = 44;
           let targetX = centerX;
           let targetY = centerY;
           let targetSize = 240;
@@ -3068,7 +3152,7 @@ body.popup-open #homeBtnMain{
       if(!blueSimMessageCopy) return;
       const useCam = blueSimView === 'camera';
       blueSimMessageCopy.innerHTML = useCam
-        ? `Move the slider to compare <span class="blue">glare</span> and the <span class="blue">difference in clarity</span> on screen.`
+        ? `Move the slider to compare <span class="blue">glare</span> and <span class="blue">clarity</span> on screen.`
         : `Move the slider to compare the <span class="blue">difference in glare and clarity</span> on screen.`;
     }
 
@@ -3418,10 +3502,10 @@ body.popup-open #homeBtnMain{
     }
 
     function setASDHintDefault(){
-      asdHint.innerHTML = `<div id="asdInfoBadge">i</div><div class="hintText"><span class="hintTitle">When an Astigmatism Lens rotates off-axis, Vision becomes blurry.<sup class="reg-mark">1</sup></span><span class="hintBody"><span class="blue">‘Blink’</span> press Rotation된 축 stabilization make check it.</span></div>`;
+      asdHint.innerHTML = `<div id="asdInfoBadge">i</div><div class="hintText"><span class="hintTitle">When an astigmatism lens rotates off-axis, vision becomes blurry.<sup class="reg-mark">1</sup></span><span class="hintBody">Press <span class="blue">“Blink”</span> to stabilize the rotated axis.</span></div>`;
     }
     function setASDHintSuccess(){
-      asdHint.innerHTML = `<div id="asdInfoBadge">i</div><div class="hintText"><span class="hintTitle">Why Axis Stability Matters for Astigmatism Lenses</span><span class="hintBody">ACUVUE ASD™ <span class="green"><span style="color:#2563eb;font-weight:600;">with a natural Blink to stabilize Lens movement for Clear Vision</span></span> 제공합니다.</span></div><button id="asdConfirmBtn" type="button">Confirm Done</button>`;
+      asdHint.innerHTML = `<div id="asdInfoBadge">i</div><div class="hintText"><span class="hintTitle">Why Axis Stability Matters for Astigmatism Lenses</span><span class="hintBody">ACUVUE ASD™ helps <span class="green"><span style="color:#2563eb;font-weight:600;">stabilize lens movement with natural blinking for clear vision</span></span>.</span></div><button id="asdConfirmBtn" type="button">Confirm Done</button>`;
       document.getElementById('asdConfirmBtn')?.addEventListener('click', (e)=>{ e.stopPropagation(); closeASD(); markASDDone(true); });
     }
     function markASDDone(done){ asdDone = !!done; missionASD.classList.toggle('done', asdDone); }
@@ -3431,9 +3515,9 @@ body.popup-open #homeBtnMain{
       if(!asdLensImg) return;
       asdLensImg.style.transform = `translate(calc(-50% + ${extraX}px + var(--irisX, 0px)), calc(-50% + var(--irisY, 0px))) rotate(${asdAngle}deg)`;
       if(asdAngleBadge){
-        if(asdAngle > 0) asdAngleBadge.textContent = `Rotation ${asdAngle}° to the Left`;
-        else if(asdAngle < 0) asdAngleBadge.textContent = `Rotation ${Math.abs(asdAngle)}° to the Right`;
-        else asdAngleBadge.textContent = `Axis Stable`;
+        if(asdAngle > 0) asdAngleBadge.textContent = `${asdAngle}° left rotation detected`;
+        else if(asdAngle < 0) asdAngleBadge.textContent = `${Math.abs(asdAngle)}° right rotation detected`;
+        else asdAngleBadge.textContent = `Axis stable`;
       }
     }
     function resetASDState(){ asdAngle = ASD_START; asdLastDir = -1; renderASDLensTransform(0); }
@@ -3579,15 +3663,15 @@ body.popup-open #homeBtnMain{
     function updatePVPMessage(){
       if(!pvpSimMessageCopy) return;
       if(pvpState === 'on'){
-        pvpSimMessageCopy.innerHTML = `<span class="blue">PVP ON</span> is shown as helping maintain <span class="blue">surface moisture and Tear Film stability</span> with each blink.`;
+        pvpSimMessageCopy.innerHTML = `With <span class="blue">PVP ON</span>, each blink is visualized as helping the lens surface <span class="blue">retain moisture and maintain tear-film stability</span>.`;
         if(pvpStateBadge) pvpStateBadge.textContent = 'PVP ON';
-        if(pvpCalloutTop) pvpCalloutTop.innerHTML = `<span class="pvpDot"></span><span class="pvpPill">Moisture layer maintained after blinking</span>`;
-        if(pvpCalloutBottom) pvpCalloutBottom.innerHTML = `<span class="pvpDot"></span><span class="pvpPill">Helps support Tear Film stability</span>`;
+        if(pvpCalloutTop) pvpCalloutTop.innerHTML = `<span class="pvpDot"></span><span class="pvpPill">Moisture film remains after blinking</span>`;
+        if(pvpCalloutBottom) pvpCalloutBottom.innerHTML = `<span class="pvpDot"></span><span class="pvpPill">Helps stabilize the tear film</span>`;
       }else{
-        pvpSimMessageCopy.innerHTML = `<span class="blue">PVP OFF</span> is shown as reduced <span class="blue">surface moisture retention and Tear Film breakup</span> after blinking in this initial Simulation.`;
+        pvpSimMessageCopy.innerHTML = `With <span class="blue">PVP OFF</span>, the simulation shows less surface moisture retention and a tear-film break-up effect after blinking.`;
         if(pvpStateBadge) pvpStateBadge.textContent = 'PVP OFF';
         if(pvpCalloutTop) pvpCalloutTop.innerHTML = `<span class="pvpDot"></span><span class="pvpPill">Dries quickly after blinking</span>`;
-        if(pvpCalloutBottom) pvpCalloutBottom.innerHTML = `<span class="pvpDot"></span><span class="pvpPill">Tear Film instability shown</span>`;
+        if(pvpCalloutBottom) pvpCalloutBottom.innerHTML = `<span class="pvpDot"></span><span class="pvpPill">Represents an unstable tear film</span>`;
       }
     }
 
@@ -3731,20 +3815,20 @@ body.popup-open #homeBtnMain{
       if(mode === 'on'){
         comfortScene.classList.add('mode-on');
         cfBtnOn.classList.add('active');
-        if(comfortStateBadge) comfortStateBadge.textContent = 'Prism Effect Present';
-        if(comfortTitle) comfortTitle.textContent = 'Optical Zone with Reduced Prism';
+        if(comfortStateBadge) comfortStateBadge.textContent = 'Prism Effect Active';
+        if(comfortTitle) comfortTitle.textContent = 'Low-Prism Optic Zone';
         if(comfortSubTitle) comfortSubTitle.textContent = 'PRISM IMPACT VISUALIZATION';
         if(comfortInfoBadge){ comfortInfoBadge.style.background = '#FFE7E7'; comfortInfoBadge.style.color = '#DB2C2C'; comfortInfoBadge.textContent = '!'; }
-        comfortMessageCopy.innerHTML = `<span class="comfort-info-title">Monocular Prism Effect</span>When Prism is present in one eye, <span class="blue"><span style="color:#3b82f6;font-weight:600;"><span style="color:#2563eb;font-weight:600;"><span style="color:#ef4444;font-weight:600;">binocular Image in position difference</span></span></span></span> causing eye fatigue may occur 수 is available.<sup class="reg-mark">1,2</sup>`;
+        comfortMessageCopy.innerHTML = `<span class="comfort-info-title">Monocular Prism Effect</span>When prism is present in one eye, a <span class="blue"><span style="color:#3b82f6;font-weight:600;"><span style="color:#2563eb;font-weight:600;"><span style="color:#ef4444;font-weight:600;">positional difference between the two eye images</span></span></span></span> may occur and can contribute to visual fatigue.<sup class="reg-mark">1,2</sup>`;
         if(comfortConfirm) comfortConfirm.style.display = 'inline-flex';
       }else{
         comfortScene.classList.add('mode-off');
         cfBtnOff.classList.add('active');
         if(comfortStateBadge) comfortStateBadge.textContent = 'No Prism Effect';
-        if(comfortTitle) comfortTitle.textContent = 'Optical Zone with Reduced Prism';
+        if(comfortTitle) comfortTitle.textContent = 'Low-Prism Optic Zone';
         if(comfortSubTitle) comfortSubTitle.textContent = 'PRISM IMPACT VISUALIZATION';
         if(comfortInfoBadge){ comfortInfoBadge.style.background = '#E4EEFF'; comfortInfoBadge.style.color = '#1F6FFF'; comfortInfoBadge.textContent = 'i'; }
-        comfortMessageCopy.innerHTML = `<span class="comfort-info-title">Monocular Prism Effect</span>For monocular Astigmatism wearers, <span class="green"><span style="color:#2563eb;font-weight:600;">the Optical Zone Prism of an Astigmatism Lens</span></span> important effect affects.`;
+        comfortMessageCopy.innerHTML = `<span class="comfort-info-title">Monocular Prism Effect</span>For monocular astigmatism wearers, the <span class="green"><span style="color:#2563eb;font-weight:600;">optic-zone prism of an astigmatism lens</span></span> can have an important impact.`;
         if(comfortConfirm) comfortConfirm.style.display = 'inline-flex';
       }
       applyComfortCameraUI();
@@ -3781,8 +3865,8 @@ body.popup-open #homeBtnMain{
       const baseCardCy = h * 0.50;
       const cardCy = baseCardCy;
 
-      const redCardCenterY = baseCardCy - 26;
-      const blueCardCenterY = baseCardCy;
+      const redCardCenterY = baseCardCy - 60;
+      const blueCardCenterY = baseCardCy + 60;
 
       cfTargetStage.style.width = cardW + 'px';
       cfTargetStage.style.height = cardH + 'px';
@@ -4034,6 +4118,14 @@ function initASDPatch(){
     const asdAngleBadge = document.getElementById('asdAngleBadge');
     const asdHint = document.getElementById('asdHint');
     const miniCtx = asdMiniFaceCanvas ? asdMiniFaceCanvas.getContext('2d') : null;
+    const asdActiveZones = Array.from(document.querySelectorAll('#asdActiveZones .asdActiveZone'));
+    /* Activation-zone sparkle follows the existing left/right ASD bars.
+       It is NOT fixed screen coordinates: each glow is calculated from the
+       current bar center and lens-axis rotation, then placed at the upper/lower
+       part of each bar. */
+    const ASD_ACTIVE_BAR_RADIUS = 31.2;
+    const ASD_ACTIVE_BAR_OFFSET = 7.3;
+
 
     if(!missionASD || !asdOverlay || !asdRotateBtn || !asdBlinkBtn || !asdCameraBtn || !asdCameraVideo || !asdLensImg || !asdAngleBadge){
       return;
@@ -4052,8 +4144,8 @@ function initASDPatch(){
     let asdMiniFaceStream = null;
     let asdCameraOn = false;
     let asdRearCaptured = false;
-    let asdMode = 'auto';
-    let asdAngleValue = 20;
+    let asdMode = 'manual';
+    let asdAngleValue = 15;
     let asdBlinkBusy = false;
     let asdAutoPromptActive = false;
     const ASD_PLACEHOLDER_DATA = 'data:image/svg+xml;utf8,' + encodeURIComponent(`<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 1200"><defs><linearGradient id="g" x1="0" x2="1" y1="0" y2="1"><stop offset="0%" stop-color="#eef4fb"/><stop offset="100%" stop-color="#dce7f6"/></linearGradient></defs><rect width="1200" height="1200" fill="url(#g)"/><circle cx="600" cy="600" r="360" fill="none" stroke="#7fa4df" stroke-width="6" opacity=".45"/><circle cx="280" cy="520" r="26" fill="#f7a11c"/><circle cx="920" cy="660" r="26" fill="#f7a11c"/><rect x="320" y="450" width="66" height="150" rx="33" fill="#80d4df" opacity=".35" transform="rotate(12 353 525)"/><rect x="810" y="585" width="66" height="150" rx="33" fill="#80d4df" opacity=".35" transform="rotate(12 843 660)"/><line x1="305" y1="535" x2="900" y2="640" stroke="#6f7480" stroke-width="8" stroke-dasharray="28 24" opacity=".7"/><rect x="120" y="880" width="260" height="86" rx="43" fill="white" stroke="#d6e3f1" stroke-width="4"/><circle cx="170" cy="923" r="12" fill="#2563eb"/><text x="198" y="935" font-family="Arial, sans-serif" font-size="38" font-weight="700" fill="#2563eb">Image load failed</text></svg>`);
@@ -4124,6 +4216,7 @@ function initASDPatch(){
     }
     function getASDBlinkButtonLabel(){
       const isStable = Math.abs(asdAngleValue) === 0;
+      if(!asdCameraOn && asdMode === 'auto') return 'Start';
       if(!asdCameraOn) return 'Blink';
       if(asdMode === 'auto'){
         if(isStable) return 'Start';
@@ -4143,10 +4236,10 @@ function initASDPatch(){
       } else {
         const isAutoPrompt = asdMode === 'auto' && asdCameraOn && asdAutoPromptActive;
         if(isAutoPrompt){
-          asdHint.innerHTML = `<div id="asdInfoBadge">i</div><div class="hintText"><span class="hintTitle">When an Astigmatism Lens rotates off-axis, Vision becomes blurry.<sup class="reg-mark">1</sup></span><span class="hintBody"><span class="blue">Camera see 눈 blink</span> Rotation된 축 stabilization try it.</span></div>`;
+          asdHint.innerHTML = `<div id="asdInfoBadge">i</div><div class="hintText"><span class="hintTitle">When an astigmatism lens rotates off-axis, vision becomes blurry.<sup class="reg-mark">1</sup></span><span class="hintBody"><span class="blue">Check camera position and blink</span> to stabilize the rotated axis.</span></div>`;
         } else {
           const guideLabel = getASDGuideLabel();
-          asdHint.innerHTML = `<div id="asdInfoBadge">i</div><div class="hintText"><span class="hintTitle">When an Astigmatism Lens rotates off-axis, Vision becomes blurry.<sup class="reg-mark">1</sup></span><span class="hintBody"><span class="blue">${guideLabel}</span> press Rotation된 축 stabilization make check it.</span></div>`;
+          asdHint.innerHTML = `<div id="asdInfoBadge">i</div><div class="hintText"><span class="hintTitle">When an astigmatism lens rotates off-axis, vision becomes blurry.<sup class="reg-mark">1</sup></span><span class="hintBody">Press <span class="blue">${guideLabel}</span> to stabilize the rotated axis.</span></div>`;
         }
       }
     }
@@ -4163,6 +4256,63 @@ function initASDPatch(){
       asdOverlay.classList.toggle('auto-captured', asdCameraOn && asdMode === 'auto' && asdRearCaptured);
       refreshHint();
       applyCameraFilter();
+    }
+
+
+    function updateASDActiveZones(){
+      if(!asdActiveZones || !asdActiveZones.length) return;
+      const centerX = 50;
+      const centerY = 52;
+      // 2026-05-04 fix: model-only glow alignment.
+      // Camera manual/auto positions are already correct, so only the non-camera model view
+      // is shifted slightly down and to the right.
+      const modelGlowShiftX = asdCameraOn ? 0 : 1.6;
+      const modelGlowShiftY = asdCameraOn ? 0 : 2.7;
+      // Model view only: keep upper glow as-is and lower only the bottom glow points.
+      const modelLowerGlowExtraY = asdCameraOn ? 0 : 5.2;
+      const rad = (asdAngleValue || 0) * Math.PI / 180;
+      const cos = Math.cos(rad);
+      const sin = Math.sin(rad);
+
+      // The cyan ASD bars sit left/right on the lens axis.
+      const leftBar = {
+        x: centerX - ASD_ACTIVE_BAR_RADIUS * cos,
+        y: centerY - ASD_ACTIVE_BAR_RADIUS * sin
+      };
+      const rightBar = {
+        x: centerX + ASD_ACTIVE_BAR_RADIUS * cos,
+        y: centerY + ASD_ACTIVE_BAR_RADIUS * sin
+      };
+
+      // Local vertical direction of each bar = perpendicular to the current axis.
+      const perpX = -sin;
+      const perpY = cos;
+      const points = [
+        { ...leftBar,  dx: -perpX * ASD_ACTIVE_BAR_OFFSET, dy: -perpY * ASD_ACTIVE_BAR_OFFSET },
+        { ...leftBar,  dx:  perpX * ASD_ACTIVE_BAR_OFFSET, dy:  perpY * ASD_ACTIVE_BAR_OFFSET },
+        { ...rightBar, dx: -perpX * ASD_ACTIVE_BAR_OFFSET, dy: -perpY * ASD_ACTIVE_BAR_OFFSET },
+        { ...rightBar, dx:  perpX * ASD_ACTIVE_BAR_OFFSET, dy:  perpY * ASD_ACTIVE_BAR_OFFSET }
+      ];
+
+      points.forEach((pt, idx) => {
+        const zone = asdActiveZones[idx];
+        if(!zone) return;
+        const isBottomGlow = idx === 1 || idx === 3;
+        zone.style.left = `${pt.x + pt.dx + modelGlowShiftX}%`;
+        zone.style.top = `${pt.y + pt.dy + modelGlowShiftY + (isBottomGlow ? modelLowerGlowExtraY : 0)}%`;
+        zone.style.transform = `translate(-50%,-50%) rotate(${asdAngleValue || 0}deg)`;
+      });
+    }
+
+    function triggerASDActiveZoneGlow(){
+      if(!asdOverlay) return;
+      asdOverlay.classList.remove('asd-active-flash');
+      void asdOverlay.offsetWidth;
+      asdOverlay.classList.add('asd-active-flash');
+      window.clearTimeout(triggerASDActiveZoneGlow._timer);
+      triggerASDActiveZoneGlow._timer = window.setTimeout(() => {
+        asdOverlay.classList.remove('asd-active-flash');
+      }, 380);
     }
 
     function renderGuide(){
@@ -4205,6 +4355,7 @@ function initASDPatch(){
         asdGuideSideRight.style.top = `${rightCyanY}%`;
         asdGuideSideRight.style.transform = `translate(-50%,-50%) rotate(${asdAngleValue}deg)`;
       }
+      updateASDActiveZones();
     }
 
     function renderAngle(){
@@ -4214,9 +4365,9 @@ function initASDPatch(){
         asdLensImg.style.transform = `translate(calc(-50% + var(--irisX, 0px)), calc(-50% + var(--irisY, 0px))) rotate(${asdAngleValue}deg)`;
       }
       if (asdAngleBadge){
-        if (asdAngleValue > 0) asdAngleBadge.textContent = `Rotation ${asdAngleValue}° to the Left`;
-        else if (asdAngleValue < 0) asdAngleBadge.textContent = `Rotation ${Math.abs(asdAngleValue)}° to the Right`;
-        else asdAngleBadge.textContent = 'Axis Stable';
+        if (asdAngleValue > 0) asdAngleBadge.textContent = `${asdAngleValue}° left rotation detected`;
+        else if (asdAngleValue < 0) asdAngleBadge.textContent = `${Math.abs(asdAngleValue)}° right rotation detected`;
+        else asdAngleBadge.textContent = 'Axis stable';
       }
       const isStable = Math.abs(asdAngleValue) === 0;
       asdOverlay.classList.toggle('asd-stable', isStable);
@@ -4227,10 +4378,10 @@ function initASDPatch(){
     }
 
     function resetASDPatchedState(){
-      asdMode = 'auto';
+      asdMode = 'manual';
       asdRearCaptured = false;
       asdAutoPromptActive = false;
-      asdAngleValue = 20;
+      asdAngleValue = 15;
       writeAngleToGlobal();
       stopASDDetectLoop();
       applyASDMiniFaceDeviceSizing();
@@ -4243,33 +4394,25 @@ function initASDPatch(){
 
     async function startASDCamera(){
       if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia){
-        alert('This browser does not support the Camera feature.');
+        alert('This browser does not support the camera feature.');
         return;
       }
       try{
-        const useRearCamera = asdMode === 'manual';
+        const useRearCamera = (asdMode === 'manual' || asdMode === 'auto');
 
-        if (!useRearCamera && !isIPhoneDevice()){
-          if (asdCameraStream){
-            asdCameraStream.getTracks().forEach(track => track.stop());
-            asdCameraStream = null;
-          }
-          try{ asdCameraVideo.pause(); }catch(e){}
-          asdCameraVideo.srcObject = null;
-          asdCameraVideo.classList.remove('ready');
-          asdCameraVideo.style.display = 'none';
-          setASDPlaceholderImage();
-          await startASDMiniCamera();
-          asdCameraOn = true;
-          asdOverlay.classList.add('camera-on');
-          asdCameraBtn.classList.add('active');
-          renderAngle();
-          return;
+        if(asdMode === 'auto'){
+          asdRearCaptured = false;
+          asdAutoPromptActive = false;
+          clearASDPlaceholderImage();
+          asdOverlay.classList.remove('auto-captured','auto-running');
+          stopASDDetectLoop();
+          await stopASDMiniCamera();
+          clearASDMiniCanvas();
         }
 
         const stream = await navigator.mediaDevices.getUserMedia({
           video: {
-            facingMode: useRearCamera ? 'environment' : 'user',
+            facingMode: useRearCamera ? { ideal:'environment' } : { ideal:'user' },
             width: { ideal: 1920 },
             height: { ideal: 1080 }
           },
@@ -4287,7 +4430,7 @@ function initASDPatch(){
         const markReady = async function(){
           asdCameraVideo.classList.add('ready');
           try{ await asdCameraVideo.play(); }catch(e){}
-          await applyRealCameraZoom(stream, 1.8);
+          await applyRealCameraZoom(stream, useRearCamera ? 1 : 1.8);
         };
         asdCameraVideo.onloadedmetadata = markReady;
         asdCameraVideo.onloadeddata = markReady;
@@ -4296,7 +4439,7 @@ function initASDPatch(){
         asdCameraBtn.classList.add('active');
         renderAngle();
       }catch(e){
-        alert('You must allow Camera access to use this feature.');
+        alert('Please allow camera permission to use this feature.');
       }
     }
 
@@ -4677,41 +4820,67 @@ function initASDPatch(){
     }
 
     function captureASDRearFrame(){
-      if(!asdCameraVideo || !asdCameraVideo.videoWidth || !asdCaptureImage) return;
+      if(!asdCameraVideo || !asdCameraVideo.videoWidth || !asdCaptureImage) return false;
       const c = document.createElement('canvas');
       c.width = asdCameraVideo.videoWidth;
       c.height = asdCameraVideo.videoHeight;
       const x = c.getContext('2d');
       x.drawImage(asdCameraVideo, 0, 0);
       asdCaptureImage.src = c.toDataURL('image/jpeg', .92);
+      asdCaptureImage.classList.remove('placeholder');
       asdRearCaptured = true;
       updateModeUI();
+      return true;
+    }
+
+    function waitForASDRearFrameReady(timeoutMs = 1800){
+      return new Promise((resolve) => {
+        if(!asdCameraVideo) return resolve(false);
+        if(asdCameraVideo.videoWidth && asdCameraVideo.videoHeight) return resolve(true);
+        const started = performance.now();
+        const check = () => {
+          if(asdCameraVideo.videoWidth && asdCameraVideo.videoHeight) return resolve(true);
+          if(performance.now() - started > timeoutMs) return resolve(false);
+          requestAnimationFrame(check);
+        };
+        check();
+      });
     }
 
     async function runASDAutoFlow(){
-      if (!asdCameraOn) {
+      if (asdMode !== 'auto') return;
+      if (asdRearCaptured && asdAutoPromptActive){
+        updateModeUI();
+        return;
+      }
+
+      if (!asdCameraOn || !asdCameraStream) {
         await startASDCamera();
       }
 
-      if (asdMode === 'auto' && !isIPhoneDevice()){
-        if (asdCameraStream){
-          asdCameraStream.getTracks().forEach(track => track.stop());
-          asdCameraStream = null;
-        }
-        try{ asdCameraVideo.pause(); }catch(e){}
-        asdCameraVideo.srcObject = null;
-        asdCameraVideo.classList.remove('ready');
-        asdCameraVideo.style.display = 'none';
-        asdCameraOn = true;
-        asdOverlay.classList.add('camera-on');
-        asdCameraBtn.classList.add('active');
+      await waitForASDRearFrameReady();
+      const captured = captureASDRearFrame();
+      if(!captured){
+        alert('Please load the rear camera view, then start again.');
+        return;
       }
+
+      if (asdCameraStream){
+        asdCameraStream.getTracks().forEach(track => track.stop());
+        asdCameraStream = null;
+      }
+      try{ asdCameraVideo.pause(); }catch(e){}
+      asdCameraVideo.srcObject = null;
+      asdCameraVideo.classList.remove('ready');
+      asdCameraVideo.style.display = 'none';
+      asdCameraOn = true;
+      asdOverlay.classList.add('camera-on','auto-captured');
+      asdCameraBtn.classList.add('active');
 
       stopASDDetectLoop();
       await stopASDMiniCamera();
-      setASDPlaceholderImage();
       asdAutoPromptActive = true;
-      const steps = [-20,-15,-10,-5,5,10,15,20];
+      const steps = [-15,-10,10,15];
       asdAngleValue = steps[Math.floor(Math.random() * steps.length)];
       writeAngleToGlobal();
       renderAngle();
@@ -4736,6 +4905,7 @@ function initASDPatch(){
           { transform:'translateY(110%)', opacity:0 }
         ], { duration:260, easing:'ease-in-out' });
       }
+      window.setTimeout(triggerASDActiveZoneGlow, 155);
     }
 
     async function applyBlinkStep(){
@@ -4747,7 +4917,10 @@ function initASDPatch(){
         stopASDDetectLoop();
         await stopASDMiniCamera();
         asdAutoPromptActive = false;
+        asdRearCaptured = false;
+        clearASDPlaceholderImage();
         updateModeUI();
+        await startASDCamera();
       }
     }
 
@@ -4795,7 +4968,7 @@ function initASDPatch(){
       ev.preventDefault();
       ev.stopPropagation();
       if (asdBlinkBusy) return;
-      const steps = [-20,-15,-10,-5,5,10,15,20];
+      const steps = [-15,-10,10,15];
       let next = steps[Math.floor(Math.random() * steps.length)];
       if (next === asdAngleValue){
         next = steps[(steps.indexOf(next) + 1) % steps.length];
@@ -4804,7 +4977,6 @@ function initASDPatch(){
       writeAngleToGlobal();
       renderAngle();
       if(asdCameraOn && asdMode === 'auto'){
-        setASDPlaceholderImage();
         await runASDAutoFlow();
       }
     };
@@ -4813,8 +4985,8 @@ function initASDPatch(){
       ev.preventDefault();
       ev.stopPropagation();
       if (asdBlinkBusy) return;
-      if(asdCameraOn && asdMode === 'auto'){
-        setASDPlaceholderImage();
+      if(asdMode === 'auto'){
+        if(asdRearCaptured && asdAutoPromptActive) return;
         await runASDAutoFlow();
         return;
       }
@@ -4829,9 +5001,19 @@ function initASDPatch(){
       ev.stopPropagation();
       if (asdCameraOn){
         stopASDCamera();
+        asdMode = 'manual';
+        asdRearCaptured = false;
+        asdAutoPromptActive = false;
+        clearASDPlaceholderImage();
+        updateModeUI();
       } else {
-        if (asdMode === 'auto') await runASDAutoFlow();
-        else await startASDCamera();
+        // Actual camera version: start with rear-camera 1x preview
+        asdMode = 'auto';
+        asdRearCaptured = false;
+        asdAutoPromptActive = false;
+        clearASDPlaceholderImage();
+        await startASDCamera();
+        updateModeUI();
       }
     };
 
@@ -4839,25 +5021,76 @@ function initASDPatch(){
       asdModeManual.addEventListener('click', async function(ev){
         ev.preventDefault();
         ev.stopPropagation();
+        // Manual mode in actual camera version: keep rear camera instead of returning to model.
         asdMode = 'manual';
         asdAutoPromptActive = false;
+        asdRearCaptured = false;
         stopASDDetectLoop();
         await stopASDMiniCamera();
         clearASDPlaceholderImage();
-        if(asdCameraOn) await startASDCamera();
+        clearASDMiniCanvas();
+        if(!asdCameraOn || !asdCameraStream){
+          await startASDCamera();
+        } else {
+          asdOverlay.classList.add('camera-on');
+          asdCameraBtn.classList.add('active');
+          asdCameraVideo.style.display = 'block';
+          asdCameraVideo.style.transform = 'scale(1)';
+          try{ await asdCameraVideo.play(); }catch(e){}
+        }
         updateModeUI();
+        renderAngle();
       });
       asdModeAuto.addEventListener('click', async function(ev){
         ev.preventDefault();
         ev.stopPropagation();
+        // Auto mode in actual camera version: start from rear-camera preview.
         asdMode = 'auto';
         asdAutoPromptActive = false;
         stopASDDetectLoop();
         await stopASDMiniCamera();
-        if(!asdCameraOn) clearASDPlaceholderImage();
+        clearASDMiniCanvas();
+        clearASDPlaceholderImage();
+        asdRearCaptured = false;
+        await startASDCamera();
         updateModeUI();
+        renderAngle();
       });
     }
+
+
+    // Separate original model version and actual camera version: handle in capture phase so lower listeners do not run first.
+    asdBlinkBtn.addEventListener('click', async function(ev){
+      ev.preventDefault();
+      ev.stopImmediatePropagation();
+      if (asdBlinkBusy) return;
+      if(asdMode === 'auto'){
+        if(asdRearCaptured && asdAutoPromptActive) return;
+        await runASDAutoFlow();
+        return;
+      }
+      asdBlinkBusy = true;
+      playASDBlinkAnimation();
+      await applyBlinkStep();
+      setTimeout(function(){ asdBlinkBusy = false; }, 245);
+    }, true);
+
+    asdRotateBtn.addEventListener('click', async function(ev){
+      ev.preventDefault();
+      ev.stopImmediatePropagation();
+      if (asdBlinkBusy) return;
+      const steps = [-15,-10,10,15];
+      let next = steps[Math.floor(Math.random() * steps.length)];
+      if (next === asdAngleValue){
+        next = steps[(steps.indexOf(next) + 1) % steps.length];
+      }
+      asdAngleValue = next;
+      writeAngleToGlobal();
+      renderAngle();
+      if(asdCameraOn && asdMode === 'auto'){
+        await runASDAutoFlow();
+      }
+    }, true);
 
     window.addEventListener('beforeunload', function(){
       stopASDDetectLoop();
@@ -4916,5 +5149,66 @@ function goHomeMain(event){
 })();
 </script>
 
+
+<script>
+/* Direct-link launcher: added only for ?mode=asd/prism/blue */
+(function(){
+  function openDirectMode(){
+    const params = new URLSearchParams(window.location.search);
+    const mode = (params.get('mode') || params.get('demo') || '').toLowerCase();
+    if(!mode) return;
+
+    setTimeout(function(){
+      if(mode === 'asd'){
+        if(typeof window.openASD === 'function') window.openASD();
+        const asd = document.getElementById('asdOverlay');
+        if(asd){
+          asd.classList.add('show');
+          asd.setAttribute('aria-hidden','false');
+        }
+        const mission = document.getElementById('missionASD');
+        if(mission && typeof mission.onclick === 'function') mission.onclick(new Event('click'));
+
+        // ASD direct link: open directly in the real camera version.
+        // Other ASD/model/prism/blue functions are unchanged.
+        setTimeout(function(){
+          const cameraBtn = document.getElementById('asdCameraBtn');
+          const overlay = document.getElementById('asdOverlay');
+          if(cameraBtn && overlay && !overlay.classList.contains('camera-on')){
+            cameraBtn.click();
+          }
+        }, 350);
+        return;
+      }
+
+      if(mode === 'prism'){
+        if(typeof window.openComfort === 'function') window.openComfort();
+        const comfort = document.getElementById('comfortOverlay');
+        if(comfort){
+          comfort.classList.add('show');
+          comfort.setAttribute('aria-hidden','false');
+        }
+        return;
+      }
+
+      if(mode === 'blue'){
+        if(typeof window.openBlueSimulator === 'function') window.openBlueSimulator();
+        const blue = document.getElementById('blueSimOverlay');
+        if(blue){
+          blue.classList.add('show');
+          blue.setAttribute('aria-hidden','false');
+        }
+        return;
+      }
+    }, 450);
+  }
+
+  if(document.readyState === 'loading'){
+    document.addEventListener('DOMContentLoaded', openDirectMode);
+  }else{
+    openDirectMode();
+  }
+})();
+</script>
 </body>
 </html>
