@@ -2428,7 +2428,7 @@ body.popup-open #homeBtnMain{
 <div id="missionBar">
 <div class="missionCard" id="missionASD" role="button" tabindex="0">
 <div class="missionNo">01</div>
-<div class="missionTitle">ASD™ Axis Stabilization</div>
+<div class="missionTitle">ASD™ Stabilization</div>
 <div class="missionDesc"> Learn more &gt; </div>
 </div>
 <div class="missionCard" id="missionPVP" role="button" tabindex="0">
@@ -2438,7 +2438,7 @@ body.popup-open #homeBtnMain{
 </div>
 <div class="missionCard" id="missionComfort" role="button" tabindex="0">
 <div class="missionNo">03</div>
-<div class="missionTitle">Low-Prism Optic Zone</div>
+<div class="missionTitle">Optical Zone with low Prism</div>
 <div class="missionDesc"> Learn more &gt; </div>
 </div>
 </div>
@@ -2481,7 +2481,7 @@ body.popup-open #homeBtnMain{
 <div id="asdCard">
 <div id="asdHeader">
 <div id="asdHeaderTitleWrap">
-<div id="asdHeaderTitle">ASD™ Axis Stabilization</div>
+<div id="asdHeaderTitle">ASD™ Stabilization</div>
 <div id="asdHeaderSubTitle">Accelerated Stabilization Design </div>
 </div>
 <button id="asdClose" type="button">X</button>
@@ -2551,7 +2551,7 @@ body.popup-open #homeBtnMain{
 <div id="comfortWrap" onclick="event.stopPropagation()">
 <div id="comfortHead">
 <div id="comfortTitleWrap">
-<div id="comfortTitle">Low-Prism Optic Zone</div>
+<div id="comfortTitle">Optical Zone with low Prism</div>
 <div id="comfortSubTitle">OPTICAL TECHNOLOGY VISUALIZATION</div>
 </div>
 <button id="comfortClose" type="button">×</button>
@@ -2606,7 +2606,7 @@ body.popup-open #homeBtnMain{
 <div aria-hidden="true" id="tutorialLayer">
 <div id="tutorialMask"></div><div id="tutorialFocus"></div>
 <div class="tutBox" id="tutLeft" style="display:none;"><div class="tutTitle">Guide 1</div><div class="tutText">Drag the lens left and right to move it.<br/>Zoom in and out to see the lens structure more clearly.</div><button class="tutBtn" id="tutNext1">Confirm</button></div>
-<div class="tutBox" id="tutBottom" style="display:none;"><div class="tutTitle">Guide 2</div><div class="tutText">Tap the “Lens Thickness Map”<br/>to check the ACUVUE<sup class="reg-mark">®</sup> Infinity Edge, the thinnest purple area.</div><button class="tutBtn" id="tutNext2">Confirm</button></div>
+<div class="tutBox" id="tutBottom" style="display:none;"><div class="tutTitle">Guide 2</div><div class="tutText">Tap the “Thickness Map”<br/>to check the ACUVUE<sup class="reg-mark">®</sup> Infinity Edge, the thinnest purple area.</div><button class="tutBtn" id="tutNext2">Confirm</button></div>
 <div class="tutBox" id="tutTop" style="display:none;"><div class="tutTitle">Guide 3</div><div class="tutText">Tap each card to start the experience.<br/></div><button class="tutBtn" id="tutDone">Confirm</button></div>
 </div>
 <div aria-hidden="true" id="blueBackGlow"></div>
@@ -2752,8 +2752,8 @@ body.popup-open #homeBtnMain{
 </model-viewer>
 <div id="bottomBtns">
 <button id="btnReset" title="Reset position">↺</button>
-<button class="btn primary" id="modeLens">Clear Lens Mode</button>
-<button class="btn" id="modeHeat">Lens Thickness Map
+<button class="btn primary" id="modeLens">Lens Mode</button>
+<button class="btn" id="modeHeat">Thickness Map
       <img alt="ACUVUE MAX Astigmatism packshot" aria-label="Open blue light feature" id="maxPackshot" onerror="this.style.display='none';" role="button" src="MAX.png" tabindex="0"/>
 </button>
 </div>
@@ -3816,7 +3816,7 @@ body.popup-open #homeBtnMain{
         comfortScene.classList.add('mode-on');
         cfBtnOn.classList.add('active');
         if(comfortStateBadge) comfortStateBadge.textContent = 'Prism Effect Active';
-        if(comfortTitle) comfortTitle.textContent = 'Low-Prism Optic Zone';
+        if(comfortTitle) comfortTitle.textContent = 'Optical Zone with low Prism';
         if(comfortSubTitle) comfortSubTitle.textContent = 'PRISM IMPACT VISUALIZATION';
         if(comfortInfoBadge){ comfortInfoBadge.style.background = '#FFE7E7'; comfortInfoBadge.style.color = '#DB2C2C'; comfortInfoBadge.textContent = '!'; }
         comfortMessageCopy.innerHTML = `<span class="comfort-info-title">Monocular Prism Effect</span>When prism is present in one eye, a <span class="blue"><span style="color:#3b82f6;font-weight:600;"><span style="color:#2563eb;font-weight:600;"><span style="color:#ef4444;font-weight:600;">positional difference between the two eye images</span></span></span></span> may occur and can contribute to visual fatigue.<sup class="reg-mark">1,2</sup>`;
@@ -3825,7 +3825,7 @@ body.popup-open #homeBtnMain{
         comfortScene.classList.add('mode-off');
         cfBtnOff.classList.add('active');
         if(comfortStateBadge) comfortStateBadge.textContent = 'No Prism Effect';
-        if(comfortTitle) comfortTitle.textContent = 'Low-Prism Optic Zone';
+        if(comfortTitle) comfortTitle.textContent = 'Optical Zone with low Prism';
         if(comfortSubTitle) comfortSubTitle.textContent = 'PRISM IMPACT VISUALIZATION';
         if(comfortInfoBadge){ comfortInfoBadge.style.background = '#E4EEFF'; comfortInfoBadge.style.color = '#1F6FFF'; comfortInfoBadge.textContent = 'i'; }
         comfortMessageCopy.innerHTML = `<span class="comfort-info-title">Monocular Prism Effect</span>For monocular astigmatism wearers, the <span class="green"><span style="color:#2563eb;font-weight:600;">optic-zone prism of an astigmatism lens</span></span> can have an important impact.`;
