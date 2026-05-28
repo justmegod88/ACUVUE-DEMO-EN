@@ -4847,7 +4847,13 @@ function initASDPatch(){
       });
     }
 
-    async function holdASDRearCapture(){
+    async function runASDAutoFlow(){
+      if (asdMode !== 'auto') return;
+      if (asdRearCaptured && asdAutoPromptActive){
+        updateModeUI();
+        return;
+      }
+
       if (!asdCameraOn || !asdCameraStream) {
         await startASDCamera();
       }
@@ -4856,7 +4862,7 @@ function initASDPatch(){
       const captured = captureASDRearFrame();
       if(!captured){
         alert('Please load the rear camera view, then start again.');
-        return false;
+        return;
       }
 
       if (asdCameraStream){
@@ -4868,55 +4874,20 @@ function initASDPatch(){
       asdCameraVideo.classList.remove('ready');
       asdCameraVideo.style.display = 'none';
       asdCameraOn = true;
-      asdRearCaptured = true;
-      asdAutoPromptActive = false;
       asdOverlay.classList.add('camera-on','auto-captured');
       asdCameraBtn.classList.add('active');
-      stopASDDetectLoop();
-      await stopASDMiniCamera();
-      clearASDMiniCanvas();
-      updateModeUI();
-      return true;
-    }
-
-    async function startASDFrontBlinkDetection(){
-      if(!asdRearCaptured){
-        const held = await holdASDRearCapture();
-        if(!held) return;
-      }
 
       stopASDDetectLoop();
       await stopASDMiniCamera();
       asdAutoPromptActive = true;
-      if(Math.abs(asdAngleValue) === 0){
-        const steps = [-15,-10,10,15];
-        asdAngleValue = steps[Math.floor(Math.random() * steps.length)];
-        writeAngleToGlobal();
-      }
+      const steps = [-15,-10,10,15];
+      asdAngleValue = steps[Math.floor(Math.random() * steps.length)];
+      writeAngleToGlobal();
       renderAngle();
       await ensureASDFaceLandmarker();
       await startASDMiniCamera();
       runASDDetectLoop();
       updateModeUI();
-    }
-
-    async function runASDAutoFlow(){
-      if (asdMode !== 'auto') return;
-
-      // If the rear-camera scene has already been captured, keep that captured
-      // background and only start the front-camera blink detection when Start is pressed.
-      if(asdRearCaptured){
-        if(asdAutoPromptActive){
-          updateModeUI();
-          return;
-        }
-        await startASDFrontBlinkDetection();
-        return;
-      }
-
-      // First Start: capture the rear-camera scene and hold the captured screen.
-      // The user can check it, then press Start again to run the front camera.
-      await holdASDRearCapture();
     }
 
     function playASDBlinkAnimation(){
@@ -4943,16 +4914,13 @@ function initASDPatch(){
       writeAngleToGlobal();
       renderAngle();
       if(asdCameraOn && asdMode === 'auto' && asdAngleValue === 0){
-        // Stabilization complete: keep the captured rear-camera screen visible.
-        // Do not jump back to the rear camera automatically.
         stopASDDetectLoop();
         await stopASDMiniCamera();
-        clearASDMiniCanvas();
         asdAutoPromptActive = false;
-        asdRearCaptured = true;
-        asdOverlay.classList.add('camera-on','auto-captured');
-        asdOverlay.classList.remove('auto-running');
+        asdRearCaptured = false;
+        clearASDPlaceholderImage();
         updateModeUI();
+        await startASDCamera();
       }
     }
 
@@ -5124,44 +5092,6 @@ function initASDPatch(){
       }
     }, true);
 
-    // Auto-open ASD camera flow when coming from main index:
-    // ./ASTIG/?autostart=asd-camera&mode=auto&camera=1
-    async function autoStartASDFromQuery(){
-      const params = new URLSearchParams(window.location.search);
-      const shouldAutoStart =
-        params.get('autostart') === 'asd-camera' ||
-        params.get('camera') === '1' ||
-        params.get('mode') === 'auto';
-
-      if(!shouldAutoStart) return;
-
-      // 1) Open ASD popup/card immediately.
-      openASDPatched();
-
-      // 2) Switch to Auto mode and start the rear camera preview.
-      asdMode = 'auto';
-      asdAutoPromptActive = false;
-      asdRearCaptured = false;
-      stopASDDetectLoop();
-      await stopASDMiniCamera();
-      clearASDMiniCanvas();
-      clearASDPlaceholderImage();
-      updateModeUI();
-      await startASDCamera();
-
-      // 3) If autostart=asd-camera is present, capture the rear-camera scene only.
-      //    Keep the captured screen visible first; the next Start press runs the front camera.
-      if(params.get('autostart') === 'asd-camera'){
-        setTimeout(function(){
-          holdASDRearCapture();
-        }, 650);
-      }
-    }
-
-    setTimeout(function(){
-      autoStartASDFromQuery();
-    }, 350);
-
     window.addEventListener('beforeunload', function(){
       stopASDDetectLoop();
       stopASDMiniCamera();
@@ -5182,8 +5112,7 @@ function initASDPatch(){
 <script>
 function goHomeMain(event){
   if(event) event.stopPropagation();
-  // Move to the main index page and prevent ASD auto-start redirect.
-  window.location.href = "../?home=1";
+  window.location.href = "../";
 }
 
 (function(){
