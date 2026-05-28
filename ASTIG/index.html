@@ -4198,7 +4198,7 @@ function initASDPatch(){
       const blur = getBlur();
       const brightness = Math.max(0.92, 1 - Math.abs(asdAngleValue) * 0.0025).toFixed(2);
       const liveFilter = `blur(${blur.toFixed(2)}px) saturate(.96) brightness(${brightness})`;
-      const capturedFilter = `blur(${blur.toFixed(2)}px) saturate(.96) brightness(${brightness})`;
+      const capturedFilter = Math.abs(asdAngleValue) === 0 ? 'none' : `blur(${blur.toFixed(2)}px) saturate(.96) brightness(${brightness})`;
 
       if (asdCaptureImage){
         asdCaptureImage.style.filter = capturedFilter;
@@ -4914,13 +4914,18 @@ function initASDPatch(){
       writeAngleToGlobal();
       renderAngle();
       if(asdCameraOn && asdMode === 'auto' && asdAngleValue === 0){
+        // Keep the captured rear-camera frame after auto blink stabilization.
+        // Do not immediately return to the rear camera preview; restart only when Start or Axis Rotation is pressed.
         stopASDDetectLoop();
         await stopASDMiniCamera();
         asdAutoPromptActive = false;
-        asdRearCaptured = false;
-        clearASDPlaceholderImage();
+        asdRearCaptured = true;
+        asdOverlay.classList.add('camera-on','auto-captured');
+        if(asdCameraVideo){
+          try{ asdCameraVideo.pause(); }catch(e){}
+          asdCameraVideo.style.display = 'none';
+        }
         updateModeUI();
-        await startASDCamera();
       }
     }
 
