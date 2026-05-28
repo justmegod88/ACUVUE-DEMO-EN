@@ -4847,13 +4847,7 @@ function initASDPatch(){
       });
     }
 
-    async function runASDAutoFlow(){
-      if (asdMode !== 'auto') return;
-      if (asdRearCaptured && asdAutoPromptActive){
-        updateModeUI();
-        return;
-      }
-
+    async function holdASDRearCapture(){
       if (!asdCameraOn || !asdCameraStream) {
         await startASDCamera();
       }
@@ -4862,7 +4856,7 @@ function initASDPatch(){
       const captured = captureASDRearFrame();
       if(!captured){
         alert('Please load the rear camera view, then start again.');
-        return;
+        return false;
       }
 
       if (asdCameraStream){
@@ -4874,20 +4868,55 @@ function initASDPatch(){
       asdCameraVideo.classList.remove('ready');
       asdCameraVideo.style.display = 'none';
       asdCameraOn = true;
+      asdRearCaptured = true;
+      asdAutoPromptActive = false;
       asdOverlay.classList.add('camera-on','auto-captured');
       asdCameraBtn.classList.add('active');
+      stopASDDetectLoop();
+      await stopASDMiniCamera();
+      clearASDMiniCanvas();
+      updateModeUI();
+      return true;
+    }
+
+    async function startASDFrontBlinkDetection(){
+      if(!asdRearCaptured){
+        const held = await holdASDRearCapture();
+        if(!held) return;
+      }
 
       stopASDDetectLoop();
       await stopASDMiniCamera();
       asdAutoPromptActive = true;
-      const steps = [-15,-10,10,15];
-      asdAngleValue = steps[Math.floor(Math.random() * steps.length)];
-      writeAngleToGlobal();
+      if(Math.abs(asdAngleValue) === 0){
+        const steps = [-15,-10,10,15];
+        asdAngleValue = steps[Math.floor(Math.random() * steps.length)];
+        writeAngleToGlobal();
+      }
       renderAngle();
       await ensureASDFaceLandmarker();
       await startASDMiniCamera();
       runASDDetectLoop();
       updateModeUI();
+    }
+
+    async function runASDAutoFlow(){
+      if (asdMode !== 'auto') return;
+
+      // If the rear-camera scene has already been captured, keep that captured
+      // background and only start the front-camera blink detection when Start is pressed.
+      if(asdRearCaptured){
+        if(asdAutoPromptActive){
+          updateModeUI();
+          return;
+        }
+        await startASDFrontBlinkDetection();
+        return;
+      }
+
+      // First Start: capture the rear-camera scene and hold the captured screen.
+      // The user can check it, then press Start again to run the front camera.
+      await holdASDRearCapture();
     }
 
     function playASDBlinkAnimation(){
@@ -4914,13 +4943,16 @@ function initASDPatch(){
       writeAngleToGlobal();
       renderAngle();
       if(asdCameraOn && asdMode === 'auto' && asdAngleValue === 0){
+        // Stabilization complete: keep the captured rear-camera screen visible.
+        // Do not jump back to the rear camera automatically.
         stopASDDetectLoop();
         await stopASDMiniCamera();
+        clearASDMiniCanvas();
         asdAutoPromptActive = false;
-        asdRearCaptured = false;
-        clearASDPlaceholderImage();
+        asdRearCaptured = true;
+        asdOverlay.classList.add('camera-on','auto-captured');
+        asdOverlay.classList.remove('auto-running');
         updateModeUI();
-        await startASDCamera();
       }
     }
 
@@ -5117,11 +5149,11 @@ function initASDPatch(){
       updateModeUI();
       await startASDCamera();
 
-      // 3) If autostart=asd-camera is present, proceed as if Start was pressed.
-      //    This captures the rear-camera view and starts the blink-detection flow.
+      // 3) If autostart=asd-camera is present, capture the rear-camera scene only.
+      //    Keep the captured screen visible first; the next Start press runs the front camera.
       if(params.get('autostart') === 'asd-camera'){
         setTimeout(function(){
-          runASDAutoFlow();
+          holdASDRearCapture();
         }, 650);
       }
     }
@@ -5150,7 +5182,8 @@ function initASDPatch(){
 <script>
 function goHomeMain(event){
   if(event) event.stopPropagation();
-  window.location.href = "../";
+  // Move to the main index page and prevent ASD auto-start redirect.
+  window.location.href = "../?home=1";
 }
 
 (function(){
