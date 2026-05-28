@@ -525,7 +525,7 @@
 
       <section class="cards">
 
-        <a class="card" href="./ASTIG/?autostart=asd-camera&mode=auto&camera=1">
+        <a class="card" href="./ASTIG/">
           <div class="card-shell">
             <div class="card-index">01</div>
 
@@ -583,19 +583,6 @@ from Near to Far </h2>
   </div>
 
   <script>
-
-    (function autoOpenASDCamera(){
-      const params = new URLSearchParams(window.location.search);
-      const stayHome =
-        params.get('home') === '1' ||
-        params.get('noAutoASD') === '1' ||
-        window.location.hash === '#home';
-
-      if(stayHome) return;
-
-      window.location.replace('./ASTIG/?autostart=asd-camera&mode=auto&camera=1');
-    })();
-
     const searchModal = document.getElementById('searchModal');
 
     function openSearchModal(){
@@ -622,5 +609,7 @@ from Near to Far </h2>
       }
     });
   </script>
+</body>
+</html>
 </body>
 </html>
