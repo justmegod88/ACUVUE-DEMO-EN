@@ -4902,21 +4902,33 @@ function initASDPatch(){
 
     async function runASDAutoFlow(){
       if (asdMode !== 'auto') return;
-
-      // If the rear-camera scene has already been captured, keep that captured
-      // background and only start the front-camera blink detection when Start is pressed.
-      if(asdRearCaptured){
-        if(asdAutoPromptActive){
-          updateModeUI();
-          return;
-        }
-        await startASDFrontBlinkDetection();
+      if (asdAutoPromptActive){
+        updateModeUI();
         return;
       }
 
-      // First Start: capture the rear-camera scene and hold the captured screen.
-      // The user can check it, then press Start again to run the front camera.
-      await holdASDRearCapture();
+      // Start flow requested:
+      // 1) page open = ASD camera preview only, no automatic capture
+      // 2) Start = rotate axis -> capture rear camera -> start front-camera blink detection
+      // 3) when stable, keep the clear captured screen; Start can run the same cycle again
+      if(asdRearCaptured || !asdCameraStream || !asdCameraVideo.srcObject){
+        asdRearCaptured = false;
+        asdAutoPromptActive = false;
+        clearASDPlaceholderImage();
+        stopASDDetectLoop();
+        await stopASDMiniCamera();
+        clearASDMiniCanvas();
+        await startASDCamera();
+      }
+
+      const steps = [-15,-10,10,15];
+      asdAngleValue = steps[Math.floor(Math.random() * steps.length)];
+      writeAngleToGlobal();
+      renderAngle();
+
+      const held = await holdASDRearCapture();
+      if(!held) return;
+      await startASDFrontBlinkDetection();
     }
 
     function playASDBlinkAnimation(){
@@ -5149,13 +5161,9 @@ function initASDPatch(){
       updateModeUI();
       await startASDCamera();
 
-      // 3) If autostart=asd-camera is present, capture the rear-camera scene only.
-      //    Keep the captured screen visible first; the next Start press runs the front camera.
-      if(params.get('autostart') === 'asd-camera'){
-        setTimeout(function(){
-          holdASDRearCapture();
-        }, 650);
-      }
+      // 3) Do NOT capture on page open.
+      //    The first Start press will rotate the axis, capture the rear camera,
+      //    and then start the front-camera blink detection.
     }
 
     setTimeout(function(){
