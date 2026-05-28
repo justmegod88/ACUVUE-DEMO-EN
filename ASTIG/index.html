@@ -5233,8 +5233,9 @@ function goHomeMain(event){
 (function(){
   function openDirectMode(){
     const params = new URLSearchParams(window.location.search);
-    const mode = (params.get('mode') || params.get('demo') || '').toLowerCase();
-    if(!mode) return;
+    // Default launch: open ASD auto camera immediately when this page is opened.
+    // Keep ?mode=prism / ?mode=blue direct links working as before.
+    const mode = (params.get('mode') || params.get('demo') || 'asd').toLowerCase();
 
     setTimeout(function(){
       if(mode === 'asd'){
