@@ -5092,6 +5092,44 @@ function initASDPatch(){
       }
     }, true);
 
+    // Auto-open ASD camera flow when coming from main index:
+    // ./ASTIG/?autostart=asd-camera&mode=auto&camera=1
+    async function autoStartASDFromQuery(){
+      const params = new URLSearchParams(window.location.search);
+      const shouldAutoStart =
+        params.get('autostart') === 'asd-camera' ||
+        params.get('camera') === '1' ||
+        params.get('mode') === 'auto';
+
+      if(!shouldAutoStart) return;
+
+      // 1) Open ASD popup/card immediately.
+      openASDPatched();
+
+      // 2) Switch to Auto mode and start the rear camera preview.
+      asdMode = 'auto';
+      asdAutoPromptActive = false;
+      asdRearCaptured = false;
+      stopASDDetectLoop();
+      await stopASDMiniCamera();
+      clearASDMiniCanvas();
+      clearASDPlaceholderImage();
+      updateModeUI();
+      await startASDCamera();
+
+      // 3) If autostart=asd-camera is present, proceed as if Start was pressed.
+      //    This captures the rear-camera view and starts the blink-detection flow.
+      if(params.get('autostart') === 'asd-camera'){
+        setTimeout(function(){
+          runASDAutoFlow();
+        }, 650);
+      }
+    }
+
+    setTimeout(function(){
+      autoStartASDFromQuery();
+    }, 350);
+
     window.addEventListener('beforeunload', function(){
       stopASDDetectLoop();
       stopASDMiniCamera();
