@@ -4404,11 +4404,29 @@ function initASDPatch(){
           asdRearCaptured = false;
           asdAutoPromptActive = false;
           clearASDPlaceholderImage();
+          if(asdCaptureImage){
+            asdCaptureImage.classList.remove('placeholder');
+            asdCaptureImage.removeAttribute('src');
+            asdCaptureImage.style.display = 'none';
+          }
           asdOverlay.classList.remove('auto-captured','auto-running');
           stopASDDetectLoop();
           await stopASDMiniCamera();
           clearASDMiniCanvas();
         }
+
+        if (asdCameraStream){
+          asdCameraStream.getTracks().forEach(track => track.stop());
+          asdCameraStream = null;
+        }
+        try{ asdCameraVideo.pause(); }catch(e){}
+        asdCameraVideo.srcObject = null;
+        asdCameraVideo.classList.remove('ready');
+        asdCameraVideo.style.display = 'block';
+        asdCameraVideo.style.opacity = '1';
+        asdCameraVideo.style.transform = useRearCamera ? 'scale(1)' : 'scaleX(-1) scale(1)';
+        asdCameraVideo.style.transformOrigin = 'center center';
+        try{ asdCameraVideo.load(); }catch(e){}
 
         const stream = await navigator.mediaDevices.getUserMedia({
           video: {
@@ -4418,25 +4436,26 @@ function initASDPatch(){
           },
           audio: false
         });
-        if (asdCameraStream){
-          asdCameraStream.getTracks().forEach(track => track.stop());
-        }
         asdCameraStream = stream;
-        asdCameraVideo.classList.remove('ready');
         asdCameraVideo.srcObject = stream;
-        asdCameraVideo.style.display = 'block';
-        asdCameraVideo.style.transform = useRearCamera ? 'scale(1)' : 'scaleX(-1) scale(1)';
-        asdCameraVideo.style.transformOrigin = 'center center';
+        asdCameraOn = true;
+        asdOverlay.classList.add('camera-on');
+        asdOverlay.classList.remove('auto-captured','auto-running');
+        asdCameraBtn.classList.add('active');
+
         const markReady = async function(){
           asdCameraVideo.classList.add('ready');
+          asdCameraVideo.style.display = 'block';
+          asdCameraVideo.style.opacity = '1';
           try{ await asdCameraVideo.play(); }catch(e){}
           await applyRealCameraZoom(stream, useRearCamera ? 1 : 1.8);
         };
         asdCameraVideo.onloadedmetadata = markReady;
         asdCameraVideo.onloadeddata = markReady;
-        asdCameraOn = true;
-        asdOverlay.classList.add('camera-on');
-        asdCameraBtn.classList.add('active');
+        try{ await asdCameraVideo.play(); }catch(e){}
+        if(asdCameraVideo.videoWidth && asdCameraVideo.videoHeight){
+          await markReady();
+        }
         renderAngle();
       }catch(e){
         alert('Please allow camera permission to use this feature.');
@@ -4854,11 +4873,35 @@ function initASDPatch(){
         return;
       }
 
+      // After stabilization, the captured rear image is intentionally held.
+      // On the next Start / Induce Axis Rotation, fully restart the rear camera first,
+      // then capture a fresh frame. This prevents the iPhone video element from staying black.
+      if (asdRearCaptured && !asdAutoPromptActive){
+        asdRearCaptured = false;
+        asdOverlay.classList.remove('auto-captured','auto-running');
+        if(asdCaptureImage){
+          asdCaptureImage.classList.remove('placeholder');
+          asdCaptureImage.removeAttribute('src');
+          asdCaptureImage.style.display = 'none';
+        }
+        if (asdCameraStream){
+          asdCameraStream.getTracks().forEach(track => track.stop());
+          asdCameraStream = null;
+        }
+        asdCameraOn = false;
+        try{ asdCameraVideo.pause(); }catch(e){}
+        asdCameraVideo.srcObject = null;
+        asdCameraVideo.classList.remove('ready');
+        asdCameraVideo.style.display = 'block';
+        asdCameraVideo.style.opacity = '1';
+      }
+
       if (!asdCameraOn || !asdCameraStream) {
         await startASDCamera();
       }
 
-      await waitForASDRearFrameReady();
+      await waitForASDRearFrameReady(2600);
+      await new Promise(resolve => setTimeout(resolve, 180));
       const captured = captureASDRearFrame();
       if(!captured){
         alert('Please load the rear camera view, then start again.');
