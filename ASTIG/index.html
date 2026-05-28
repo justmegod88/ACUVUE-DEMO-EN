@@ -2189,8 +2189,8 @@
       background:#dfe6ef; z-index:1;
     }
     #asdCaptureImage.placeholder{ display:block; }
-    #asdOverlay.camera-on.auto-captured #asdCaptureImage{ display:block; }
-    #asdOverlay.camera-on.auto-captured #asdCameraVideo{ display:none; }
+    #asdOverlay.camera-on.auto-captured #asdCaptureImage{ display:block !important; opacity:1 !important; z-index:2 !important; }
+    #asdOverlay.camera-on.auto-captured #asdCameraVideo{ display:none !important; opacity:0 !important; }
 
     #asdModeToggle{
       position:absolute; left:14px; top:14px; z-index:8; display:none;
@@ -4144,6 +4144,7 @@ function initASDPatch(){
     let asdMiniFaceStream = null;
     let asdCameraOn = false;
     let asdRearCaptured = false;
+    let lastASDRearCaptureSrc = '';
     let asdMode = 'manual';
     let asdAngleValue = 15;
     let asdBlinkBusy = false;
@@ -4175,6 +4176,7 @@ function initASDPatch(){
       if(!asdCaptureImage) return;
       asdCaptureImage.classList.remove('placeholder');
       asdCaptureImage.src = '';
+      lastASDRearCaptureSrc = '';
       asdRearCaptured = false;
     }
 
@@ -4211,6 +4213,12 @@ function initASDPatch(){
         asdCameraVideo.style.display = 'block';
         asdCameraVideo.style.filter = liveFilter;
       } else if (asdCameraOn && asdMode === 'auto' && asdRearCaptured){
+        if(asdCaptureImage){
+          asdCaptureImage.style.display = 'block';
+          asdCaptureImage.style.opacity = '1';
+        }
+        asdCameraVideo.style.display = 'none';
+        asdCameraVideo.style.opacity = '0';
         asdCameraVideo.style.filter = liveFilter;
       }
     }
@@ -4402,6 +4410,7 @@ function initASDPatch(){
 
         if(asdMode === 'auto'){
           asdRearCaptured = false;
+          lastASDRearCaptureSrc = '';
           asdAutoPromptActive = false;
           clearASDPlaceholderImage();
           if(asdCaptureImage){
@@ -4845,11 +4854,35 @@ function initASDPatch(){
       c.height = asdCameraVideo.videoHeight;
       const x = c.getContext('2d');
       x.drawImage(asdCameraVideo, 0, 0);
-      asdCaptureImage.src = c.toDataURL('image/jpeg', .92);
+      lastASDRearCaptureSrc = c.toDataURL('image/jpeg', .92);
+      asdCaptureImage.src = lastASDRearCaptureSrc;
       asdCaptureImage.classList.remove('placeholder');
+      asdCaptureImage.style.display = 'block';
+      asdCaptureImage.style.opacity = '1';
       asdRearCaptured = true;
       updateModeUI();
       return true;
+    }
+
+    function holdASDRearCaptureFrame(){
+      if(!asdCaptureImage) return;
+      if(!asdCaptureImage.getAttribute('src') && lastASDRearCaptureSrc){
+        asdCaptureImage.src = lastASDRearCaptureSrc;
+      }
+      asdCaptureImage.classList.remove('placeholder');
+      asdCaptureImage.style.display = 'block';
+      asdCaptureImage.style.opacity = '1';
+      asdCaptureImage.style.zIndex = '2';
+      if(asdCameraVideo){
+        try{ asdCameraVideo.pause(); }catch(e){}
+        asdCameraVideo.style.display = 'none';
+        asdCameraVideo.style.opacity = '0';
+      }
+      asdCameraOn = true;
+      asdRearCaptured = true;
+      asdOverlay.classList.add('camera-on','auto-captured');
+      asdOverlay.classList.remove('auto-running','stabilizing');
+      if(asdCameraBtn) asdCameraBtn.classList.add('active');
     }
 
     function waitForASDRearFrameReady(timeoutMs = 1800){
@@ -4878,6 +4911,7 @@ function initASDPatch(){
       // then capture a fresh frame. This prevents the iPhone video element from staying black.
       if (asdRearCaptured && !asdAutoPromptActive){
         asdRearCaptured = false;
+        lastASDRearCaptureSrc = '';
         asdOverlay.classList.remove('auto-captured','auto-running');
         if(asdCaptureImage){
           asdCaptureImage.classList.remove('placeholder');
@@ -4917,8 +4951,7 @@ function initASDPatch(){
       asdCameraVideo.classList.remove('ready');
       asdCameraVideo.style.display = 'none';
       asdCameraOn = true;
-      asdOverlay.classList.add('camera-on','auto-captured');
-      asdCameraBtn.classList.add('active');
+      holdASDRearCaptureFrame();
 
       stopASDDetectLoop();
       await stopASDMiniCamera();
@@ -4963,12 +4996,9 @@ function initASDPatch(){
         await stopASDMiniCamera();
         asdAutoPromptActive = false;
         asdRearCaptured = true;
-        asdOverlay.classList.add('camera-on','auto-captured');
-        if(asdCameraVideo){
-          try{ asdCameraVideo.pause(); }catch(e){}
-          asdCameraVideo.style.display = 'none';
-        }
+        holdASDRearCaptureFrame();
         updateModeUI();
+        holdASDRearCaptureFrame();
       }
     }
 
